@@ -3,186 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Studio Manager Pro | Multi-Branch v6</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <title>Diamond Pro | Ultimate Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --p: #6366f1; --yoga: #10b981; --dance: #ec4899; --gym: #f59e0b; --gymnastic: #06b6d4;
-            --bg: #f8fafc; --d: #0f172a;
+            --bg: #000000;
+            --card: #1c1c1e;
+            --accent: #d2fe00; /* Resimlerdeki o özel sarı-yeşil tonu */
+            --text: #ffffff;
+            --muted: #8e8e93;
+            --border: #2c2c2e;
         }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; background: var(--bg); padding-bottom: 90px; }
-        header { background: var(--d); color: white; padding: 40px 20px; border-radius: 0 0 30px 30px; }
-        .branch-badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; text-transform: uppercase; }
-        .bg-yoga { background: var(--yoga); }
-        .bg-dance { background: var(--dance); }
-        .bg-gym { background: var(--gym); }
-        .bg-gymnastic { background: var(--gymnastic); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+
+        /* --- UI BİLEŞENLERİ (RESİMDEKİ GİBİ) --- */
         
-        .glass-card { background: white; border-radius: 20px; padding: 20px; margin: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid #eee; }
-        .nav-btn { border: none; background: none; color: #94a3b8; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; }
-        .nav-btn.active { color: var(--p); }
+        .header-logo {
+            padding: 60px 20px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-circle {
+            width: 40px; height: 40px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: var(--accent);
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .icon-box {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        /* --- KALORİ HALKASI MODÜLÜ --- */
+        .nutrition-header { text-align: center; padding: 20px; }
         
-        .btn-add { background: var(--p); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 800; margin-top: 10px; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; }
+        .progress-circle {
+            position: relative;
+            width: 200px; height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) 75%, #2c2c2e 0); /* Örnek %75 doluluk */
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .progress-circle::before {
+            content: "";
+            position: absolute;
+            width: 170px; height: 170px;
+            background: var(--bg);
+            border-radius: 50%;
+        }
+
+        .inner-text {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        /* --- LİSTE TASARIMI (RESİMDEKİ GİBİ) --- */
+        .session-item {
+            background: var(--card);
+            margin: 10px 20px;
+            padding: 18px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* --- NAVİGASYON (RESİMDEKİ GİBİ) --- */
+        .nav-bar {
+            position: fixed;
+            bottom: 0; width: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around;
+            padding: 15px 0 35px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-item { color: var(--muted); text-align: center; font-size: 10px; border:none; background:none; }
+        .nav-item.active { color: var(--accent); }
         
-        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
-        .page { display: none; animation: fadeIn 0.4s; }
-        .active-page { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .center-btn {
+            width: 55px; height: 55px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: black;
+            margin-top: -40px;
+            box-shadow: 0 0 20px rgba(210, 254, 0, 0.3);
+        }
+
+        .page { display: none; }
+        .active-page { display: block; animation: slideUp 0.3s ease-out; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <h2 style="margin:0">Studio Pro <span style="font-weight:300">v6</span></h2>
-    <p style="opacity:0.6; font-size:12px">Branş ve Ders Yönetim Sistemi</p>
-</header>
-
-<div id="dash" class="page active-page">
-    <div class="glass-card">
-        <h3>Branş Dağılımı</h3>
-        <canvas id="branchChart" height="200"></canvas>
+<div id="home" class="page active-page">
+    <div class="header-logo">
+        <div class="logo-circle">D</div>
+        <div>
+            <div style="font-weight: 800; font-size: 18px;">Diamond Pro</div>
+            <div style="font-size: 12px; color: var(--muted);">Hoş geldin, Yönetici</div>
+        </div>
     </div>
-    <div class="glass-card">
-        <h3>Bugünkü Dersler</h3>
-        <div id="today-classes">
-            <p style="font-size:13px; color:#64748b">Henüz ders programı oluşturulmadı.</p>
+
+    <div class="grid-menu">
+        <div class="menu-card" onclick="showP('mems')">
+            <div class="icon-box" style="background: #d2fe0022; color: var(--accent);">👥</div>
+            Üyeler
+        </div>
+        <div class="menu-card">
+            <div class="icon-box" style="background: #ffb80022; color: #ffb800;">📅</div>
+            Seanslar
+        </div>
+        <div class="menu-card">
+            <div class="icon-box" style="background: #007aff22; color: #007aff;">💰</div>
+            Finans
+        </div>
+        <div class="menu-card">
+            <div class="icon-box" style="background: #ff2d5522; color: #ff2d55;">🏋️</div>
+            Eğitmenler
+        </div>
+    </div>
+
+    <div style="padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h3>Bugünkü Seanslar</h3>
+        <span style="color: var(--accent); font-size: 12px;">Takvim ></span>
+    </div>
+
+    <div class="session-item">
+        <div>
+            <div style="font-weight: 600;">Mahmut Tozkoparan</div>
+            <div style="font-size: 12px; color: var(--muted);">10:05 - 11:05</div>
+        </div>
+    </div>
+    <div class="session-item">
+        <div>
+            <div style="font-weight: 600;">Nur Genç</div>
+            <div style="font-size: 12px; color: var(--muted);">12:05 - 13:05</div>
         </div>
     </div>
 </div>
 
-<div id="mems" class="page">
-    <div class="glass-card">
-        <h3>Yeni Üye Kaydı</h3>
-        <input type="text" id="mName" placeholder="Ad Soyad">
-        <select id="mBranch">
-            <option value="gym">Gym / Fitness</option>
-            <option value="yoga">Yoga</option>
-            <option value="dance">Dans</option>
-            <option value="gymnastic">Cimnastik</option>
-        </select>
-        <select id="mType">
-            <option value="1500">Aylık Paket (₺1.500)</option>
-            <option value="4000">3 Aylık Paket (₺4.000)</option>
-            <option value="12000">Yıllık VIP (₺12.000)</option>
-        </select>
-        <button class="btn-add" onclick="addMember()">SİSTEME EKLE</button>
+<div id="diet" class="page">
+    <div class="nutrition-header">
+        <h2 style="margin-bottom:0">Doğru beslenme ve kalori takibi</h2>
     </div>
-    
-    <div class="glass-card">
-        <h3>Üye Listesi</h3>
-        <div id="mList"></div>
-    </div>
-</div>
 
-<div id="schedule" class="page">
-    <div class="glass-card">
-        <h3>Ders Tanımla</h3>
-        <input type="text" id="cName" placeholder="Ders Adı (Örn: Hatha Yoga)">
-        <select id="cBranch">
-            <option value="yoga">Yoga</option>
-            <option value="dance">Dans</option>
-            <option value="gymnastic">Cimnastik</option>
-        </select>
-        <input type="time" id="cTime">
-        <input type="number" id="cLimit" placeholder="Kontenjan (Örn: 15)">
-        <button class="btn-add" onclick="addClass()" style="background:var(--yoga)">DERSİ YAYINLA</button>
+    <div class="progress-circle">
+        <div class="inner-text">
+            <div style="font-size: 12px; color: var(--muted);">Şuanki</div>
+            <div style="font-size: 32px; font-weight: 800;">1800 <small style="font-size:14px">kal</small></div>
+            <div style="font-size: 11px; color: var(--accent);">Hedef 2136 kal</div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-around; padding: 10px 40px; font-size: 12px;">
+        <div style="text-align:center"><div style="color:#007aff">● 41g</div> Karb</div>
+        <div style="text-align:center"><div style="color:#ffb800">● 50g</div> Protein</div>
+        <div style="text-align:center"><div style="color:#ff2d55">● 40g</div> Yağ</div>
+    </div>
+
+    <div class="session-item" style="border:none; margin-top:30px;">
+        <div style="display:flex; align-items:center; gap:15px;">
+            <div style="font-size:24px">🥗</div>
+            <div>
+                <div style="font-weight:600">Besin Kalorisi Hesapla</div>
+                <div style="font-size:11px; color:var(--muted)">Beslenme</div>
+            </div>
+        </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <button class="nav-btn active" onclick="nav('dash', this)"><span>📊</span>Panel</button>
-    <button class="nav-btn" onclick="nav('mems', this)"><span>👥</span>Üyeler</button>
-    <button class="nav-btn" onclick="nav('schedule', this)"><span>📅</span>Program</button>
+    <button class="nav-item active" onclick="showP('home', this)">
+        <div style="font-size:20px">🏠</div>
+        Ana Sayfa
+    </button>
+    <button class="nav-item" onclick="showP('diet', this)">
+        <div style="font-size:20px">🍎</div>
+        Beslenme
+    </button>
+    <div class="center-btn">＋</div>
+    <button class="nav-item">
+        <div style="font-size:20px">📅</div>
+        Takvim
+    </button>
+    <button class="nav-item">
+        <div style="font-size:20px">👤</div>
+        Profil
+    </button>
 </nav>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('studio_v6')) || { members: [], classes: [] };
-
-    function nav(id, btn) {
+    function showP(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active-page');
-        btn.classList.add('active');
-        if(id === 'dash') initChart();
+        if(btn.tagName === 'BUTTON') btn.classList.add('active');
     }
-
-    function addMember() {
-        let name = document.getElementById('mName').value;
-        let branch = document.getElementById('mBranch').value;
-        let price = document.getElementById('mType').value;
-        if(!name) return;
-
-        db.members.push({ name, branch, price, date: new Date().toLocaleDateString() });
-        save();
-        document.getElementById('mName').value = '';
-    }
-
-    function addClass() {
-        let name = document.getElementById('cName').value;
-        let branch = document.getElementById('cBranch').value;
-        let time = document.getElementById('cTime').value;
-        let limit = document.getElementById('cLimit').value;
-        if(!name || !time) return;
-
-        db.classes.push({ name, branch, time, limit, joined: 0 });
-        save();
-        alert("Ders programa eklendi!");
-    }
-
-    function save() {
-        localStorage.setItem('studio_v6', JSON.stringify(db));
-        renderMems();
-        renderClasses();
-        initChart();
-    }
-
-    function renderMems() {
-        document.getElementById('mList').innerHTML = db.members.map(m => `
-            <div class="member-item">
-                <div><b>${m.name}</b><br><small>${m.date}</small></div>
-                <span class="branch-badge bg-${m.branch}">${m.branch}</span>
-            </div>
-        `).reverse().join('');
-    }
-
-    function renderClasses() {
-        document.getElementById('today-classes').innerHTML = db.classes.map(c => `
-            <div style="padding:10px; border-left:4px solid var(--${c.branch}); background:#f1f5f9; margin-bottom:10px; border-radius:8px">
-                <div style="display:flex; justify-content:space-between">
-                    <b>${c.name}</b>
-                    <span>${c.time}</span>
-                </div>
-                <small>Kontenjan: ${c.joined}/${c.limit}</small>
-            </div>
-        `).join('');
-    }
-
-    function initChart() {
-        const counts = { gym: 0, yoga: 0, dance: 0, gymnastic: 0 };
-        db.members.forEach(m => counts[m.branch]++);
-
-        const ctx = document.getElementById('branchChart').getContext('2d');
-        if(window.myChart) window.myChart.destroy();
-        window.myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Gym', 'Yoga', 'Dans', 'Cimnastik'],
-                datasets: [{
-                    data: [counts.gym, counts.yoga, counts.dance, counts.gymnastic],
-                    backgroundColor: ['#f59e0b', '#10b981', '#ec4899', '#06b6d4'],
-                    borderWidth: 0
-                }]
-            },
-            options: { plugins: { legend: { position: 'bottom' } } }
-        });
-    }
-
-    window.onload = () => { renderMems(); renderClasses(); initChart(); };
 </script>
 
 </body>
 </html>
-
