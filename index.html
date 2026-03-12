@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Studio Manager Pro | V16</title>
+    <title>Studio Manager Pro | V17</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -13,44 +13,46 @@
             --text: #ffffff; --muted: #8e8e93; --border: #1c1c1e; --danger: #ff3b30; --success: #34c759;
         }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 110px; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 110px; overflow-x: hidden; }
 
-        /* --- ANA GİRİŞ SEÇİM --- */
-        .auth-selection { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; }
+        /* --- ANA GİRİŞ --- */
+        .auth-selection { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%); }
         .auth-btn { width: 100%; max-width: 320px; padding: 20px; margin: 12px; border-radius: 24px; border: 1px solid var(--border); background: var(--card); color: white; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
-        .auth-btn:active { transform: scale(0.95); background: var(--accent); color: black; }
+        .auth-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
 
-        /* --- GATE (KAPI) --- */
-        #gate-page { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        #gate-page { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         
-        /* --- GENEL PANEL --- */
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; }
+        /* --- PANELLER --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; animation: fadeIn 0.4s ease; }
         .card { background: var(--card); border-radius: 26px; padding: 22px; margin-bottom: 18px; border: 1px solid var(--border); }
-        input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; }
+        input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; outline: none; }
+        input:focus { border-color: var(--accent); }
         .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; margin-top: 15px; }
         
-        /* --- ÜYE NAVİGASYON --- */
+        /* --- NAVİGASYON --- */
         .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,12,0.98); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 15px 0 35px; border-top: 1px solid var(--border); z-index: 5000; }
         .nav-item { color: var(--muted); font-size: 10px; text-align: center; flex: 1; cursor: pointer; font-weight: 600; }
         .nav-item.active { color: var(--accent); }
 
-        /* --- TAB İÇERİKLERİ --- */
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content { display: none; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        #reader { width: 100%; border-radius: 20px; overflow: hidden; display: none; margin-top: 15px; border: 2px solid var(--accent) !important; }
-        .status-badge { padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-        .rule-item { margin-bottom: 10px; padding-left: 25px; position: relative; font-size: 13px; color: var(--muted); line-height: 1.5; }
-        .rule-item::before { content: '•'; position: absolute; left: 0; color: var(--accent); font-size: 20px; }
+        /* --- QR BOX --- */
+        #reader { width: 100%; border-radius: 20px; overflow: hidden; display: none; margin-top: 15px; border: 2px solid var(--accent); }
+        
+        /* --- LİSTE VE TABLOLAR --- */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .stat-card { background: var(--border); padding: 15px; border-radius: 20px; text-align: center; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; background: rgba(210, 254, 0, 0.1); color: var(--accent); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body onload="app.checkRemember()">
 
 <div id="auth-selection" class="auth-selection">
-    <div style="background:var(--accent); color:black; width:80px; height:80px; border-radius:25px; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:800; margin-bottom:20px;">S</div>
-    <h1 style="margin:0;">STUDIO PRO</h1>
-    <p style="color:var(--muted); margin-top:5px; margin-bottom:40px;">Hoş geldiniz, giriş yapın.</p>
+    <h1 style="font-weight: 800; letter-spacing: -2px; font-size: 32px;">STUDIO<span style="color:var(--accent);">PRO</span></h1>
+    <p style="color:var(--muted); margin-bottom: 40px;">Uygulamaya başlamak için seçim yapın</p>
     <button class="auth-btn" onclick="ui.showGate('admin')">👑 Yönetici Paneli</button>
     <button class="auth-btn" onclick="ui.showGate('member')">👤 Üye Girişi</button>
 </div>
@@ -59,94 +61,91 @@
     <div class="card" style="max-width: 360px; width:100%;">
         <h3 id="gate-title" style="margin-top:0;">Giriş</h3>
         <input type="password" id="gate-input" placeholder="">
-        <div style="margin: 15px 0; font-size: 13px; text-align: left; display:flex; align-items:center; gap:8px;">
-            <input type="checkbox" id="rememberMe" style="width:20px; height:20px; margin:0;"> Beni Hatırla
+        <div style="margin: 15px 0; font-size: 13px; display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="rememberMe" style="width:18px; height:18px;"> Beni Hatırla
         </div>
-        <button class="btn" onclick="app.processLogin()">Onayla ve Devam Et</button>
-        <button onclick="ui.back()" style="background:none; border:none; color:var(--muted); margin-top:20px; width:100%; font-weight:600;">Geri Dön</button>
+        <button class="btn" onclick="app.processLogin()">Giriş Yap</button>
+        <button onclick="ui.back()" style="background:none; border:none; color:var(--muted); margin-top:20px; width:100%;">Geri Dön</button>
     </div>
 </div>
 
 <div id="admin-panel" class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-        <h2>Yönetim</h2>
-        <button onclick="app.logout()" class="status-badge" style="background:var(--danger); color:white; border:none;">ÇIKIŞ</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Yönetici</h2>
+        <button onclick="app.logout()" class="badge" style="border:none; background:var(--danger); color:white;">GÜVENLİ ÇIKIŞ</button>
     </div>
-
     <div class="card" style="text-align:center;">
-        <b>Hoca / Stüdyo QR Kodu</b><br>
-        <div id="admin-qr" style="background:white; padding:12px; display:inline-block; margin:20px; border-radius:18px;"></div>
-        <p style="font-size:12px; color:var(--muted);">Üyelere bu kodu okutarak seans düşebilirsiniz.</p>
+        <b>Hoca QR Kodu</b><br>
+        <div id="admin-qr" style="background:white; padding:10px; display:inline-block; margin:15px; border-radius:15px;"></div>
     </div>
-
     <div class="card">
-        <h3>Üye Ekle</h3>
+        <h3>Üye Kaydet</h3>
         <input type="text" id="mName" placeholder="Ad Soyad">
-        <input type="tel" id="mPhone" placeholder="Telefon (Giriş Şifresi)">
+        <input type="tel" id="mPhone" placeholder="Telefon">
         <select id="mPack">
-            <option value="8">8 Seans (1 Ay Kullanım)</option>
-            <option value="12">12 Seans (2 Ay Kullanım)</option>
-            <option value="custom">Özel Tanımla</option>
+            <option value="8">8 Seans (1 Ay)</option>
+            <option value="12">12 Seans (2 Ay)</option>
         </select>
-        <button class="btn" onclick="app.addMember()">Kaydet</button>
+        <button class="btn" onclick="app.addMember()">Kaydı Tamamla</button>
     </div>
-
-    <h3>Üyeler ve Finans</h3>
     <div id="admin-list"></div>
 </div>
 
 <div id="member-panel" class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 id="u-welcome" style="margin:0;">Merhaba</h2>
-        <span class="status-badge" style="background:var(--accent); color:black;">AKTİF</span>
+        <h2 id="u-welcome">Merhaba</h2>
+        <button onclick="app.logout()" class="badge" style="border:none; background:var(--danger); color:white;">ÇIKIŞ</button>
     </div>
 
     <div id="tab-home" class="tab-content active">
-        <div class="card" style="text-align:center; background: linear-gradient(145deg, #161618, #0b0b0c);">
-            <small style="color:var(--muted); letter-spacing:1px;">KALAN DERS SAYINIZ</small>
-            <h1 id="u-sess" style="font-size:80px; margin:15px 0; color:var(--accent); font-weight:800;">0</h1>
-            <p id="u-expiry" style="font-size:13px; color:var(--danger); margin-bottom:20px;"></p>
-            
+        <div class="card" style="text-align:center;">
+            <small style="color:var(--muted)">KALAN SEANS</small>
+            <h1 id="u-sess" style="font-size:70px; color:var(--accent); margin:10px 0;">0</h1>
+            <p id="u-expiry" style="font-size:12px; color:var(--danger);"></p>
             <div id="reader"></div>
-            <button class="btn" onclick="app.startScanner()">📷 Kamerayı Aç (Hocaya Okut)</button>
-            <button class="btn" style="background:#1c1c1e; color:white;" onclick="document.getElementById('qr-file').click()">🖼️ Galeriden Seç</button>
+            <button class="btn" onclick="app.startScanner()">📷 Kamera ile Okut</button>
+            <button class="btn" style="background:var(--border); color:white;" onclick="document.getElementById('qr-file').click()">🖼️ Galeriden QR Seç</button>
             <input type="file" id="qr-file" accept="image/*" style="display:none;" onchange="app.scanFromGallery(event)">
-        </div>
-        <div class="card">
-            <b>Üyelik Detayları</b><hr style="border:0; border-top:1px solid var(--border); margin:10px 0;">
-            <small>Başlangıç:</small> <span id="u-start" style="float:right; font-weight:600;">--</span><br>
-            <small>Bitiş Tarihi:</small> <span id="u-end" style="float:right; font-weight:600;">--</span>
         </div>
     </div>
 
     <div id="tab-cal" class="tab-content">
-        <h3>Haftalık Ders Programı</h3>
-        <div class="card"><b>08:00</b> - Pilates Reformer <span class="status-badge" style="float:right; font-size:9px;">Grup</span></div>
-        <div class="card"><b>12:30</b> - Yoga Flow <span class="status-badge" style="float:right; font-size:9px;">Bireysel</span></div>
-        <div class="card"><b>19:00</b> - Functional Training <span class="status-badge" style="float:right; font-size:9px;">Grup</span></div>
+        <h3>Haftalık Program</h3>
+        <div class="card">📅 <b>Pazartesi:</b> 10:00 Reformer</div>
+        <div class="card">📅 <b>Çarşamba:</b> 19:00 Yoga</div>
+        <div class="card">📅 <b>Cuma:</b> 11:00 Pilates</div>
     </div>
 
     <div id="tab-diet" class="tab-content">
-        <h3>Beslenme ve Su Takibi</h3>
-        <div class="card">🍎 <b>Kahvaltı:</b> 2 Haşlanmış Yumurta, 1 Dilim Tam Buğday, Mevsim Yeşilliği</div>
-        <div class="card">🥗 <b>Öğle:</b> Izgara Tavuk (150g), Zeytinyağlı Mevsim Salatası</div>
-        <div class="card">🍲 <b>Akşam:</b> Hafif Sebze Yemeği veya Çorba, 1 Kase Yoğurt</div>
-        <div class="card" style="background:rgba(210, 254, 0, 0.05);">💧 <b>Günlük Hedef:</b> Minimum 2.5 Litre Su İçmeyi Unutmayın!</div>
+        <h3>Beslenme Planı</h3>
+        <div class="card">🍳 <b>Kahvaltı:</b> 2 Haşlanmış Yumurta, Lor</div>
+        <div class="card">🥗 <b>Öğle:</b> Tavuklu Salata</div>
+        <div class="card">🍲 <b>Akşam:</b> Sebze Yemeği</div>
     </div>
 
-    <div id="tab-pay" class="tab-content">
-        <h3>Ödeme ve Kurallar</h3>
-        <div class="card">
-            <h4 style="color:var(--accent); margin-top:0;">💳 Ödeme Şartları</h4>
-            <div class="rule-item">Tüm paket ödemeleri üyeliğin ilk haftası içerisinde tamamlanmalıdır.</div>
-            <div class="rule-item">8 Seanslık paketler 30 gün, 12 seanslık paketler 60 gün geçerlidir.</div>
-            <div class="rule-item">Süresi dolan ancak kullanılmayan seanslar bir sonraki aya devredilmez.</div>
+    <div id="tab-finance" class="tab-content">
+        <h3>Finans ve Ödemeler</h3>
+        <div class="stat-grid">
+            <div class="stat-card">
+                <small style="color:var(--muted)">Toplam Ödenen</small><br>
+                <b id="u-total-paid" style="color:var(--success)">₺ 0.00</b>
+            </div>
+            <div class="stat-card">
+                <small style="color:var(--muted)">Kalan Borç</small><br>
+                <b id="u-debt" style="color:var(--danger)">₺ 0.00</b>
+            </div>
         </div>
         <div class="card">
-            <h4 style="color:var(--accent); margin-top:0;">📝 Stüdyo Kuralları</h4>
-            <div class="rule-item">Ders iptalleri en az 6 saat öncesinden bildirilmelidir. Aksi halde seans düşülür.</div>
-            <div class="rule-item">Stüdyo içerisinde temiz spor ayakkabı veya kaydırmaz çorap kullanımı zorunludur.</div>
-            <div class="rule-item">Hijyen kuralları gereği ders sırasında şahsi havlu kullanımı rica olunur.</div>
+            <h4>Ödeme Geçmişi</h4>
+            <div id="u-payment-list" style="font-size:13px; color:var(--muted);">Henüz kayıt yok.</div>
+        </div>
+        <div class="card">
+            <h4>📜 Üyelik Kuralları</h4>
+            <p style="font-size:12px; color:var(--muted);">
+                • Ders iptalleri 6 saat önceden yapılmalıdır.<br>
+                • Ödemeler paket başında peşin alınır.<br>
+                • Hijyen için temiz ayakkabı zorunludur.
+            </p>
         </div>
     </div>
 </div>
@@ -155,7 +154,7 @@
     <div class="nav-item active" onclick="app.switchTab('tab-home', this)">🏠<br>Panel</div>
     <div class="nav-item" onclick="app.switchTab('tab-cal', this)">📅<br>Takvim</div>
     <div class="nav-item" onclick="app.switchTab('tab-diet', this)">🍎<br>Diyet</div>
-    <div class="nav-item" onclick="app.switchTab('tab-pay', this)">💳<br>Ödeme</div>
+    <div class="nav-item" onclick="app.switchTab('tab-finance', this)">💰<br>Finans</div>
 </nav>
 
 <script>
@@ -165,7 +164,7 @@ const ui = {
         document.getElementById('auth-selection').style.display = 'none';
         document.getElementById('gate-page').style.display = 'flex';
         document.getElementById('gate-title').innerText = mode === 'admin' ? 'Yönetici' : 'Üye';
-        document.getElementById('gate-input').placeholder = mode === 'admin' ? 'Yönetici Şifresi' : 'Telefon Numaranız';
+        document.getElementById('gate-input').placeholder = mode === 'admin' ? 'Şifre' : 'Telefon No';
     },
     back() {
         document.getElementById('gate-page').style.display = 'none';
@@ -174,28 +173,27 @@ const ui = {
 };
 
 const app = {
-    db: JSON.parse(localStorage.getItem('studio_v16')) || { members: [], adminPass: "1234" },
+    db: JSON.parse(localStorage.getItem('studio_v17')) || { members: [], adminPass: "1234" },
     user: null,
 
     processLogin() {
-        const val = document.getElementById('gate-input').value;
+        const key = document.getElementById('gate-input').value;
         const rem = document.getElementById('rememberMe').checked;
 
         if(ui.mode === 'admin') {
-            if(val === this.db.adminPass) {
-                if(rem) localStorage.setItem('sm_v16_rem', JSON.stringify({val, mode:'admin'}));
+            if(key === this.db.adminPass) {
+                if(rem) localStorage.setItem('sm_v17_auth', JSON.stringify({key, mode:'admin'}));
                 this.loadPanel('admin-panel');
-                this.renderAdmin();
-            } else alert("Hatalı Şifre!");
+            } else alert("Hatalı!");
         } else {
-            const m = this.db.members.find(u => u.phone === val);
+            const m = this.db.members.find(u => u.phone === key);
             if(m) {
-                if(rem) localStorage.setItem('sm_v16_rem', JSON.stringify({val, mode:'member'}));
+                if(rem) localStorage.setItem('sm_v17_auth', JSON.stringify({key, mode:'member'}));
                 this.user = m;
                 this.loadPanel('member-panel');
                 document.getElementById('member-nav').style.display = 'flex';
                 this.renderUser();
-            } else alert("Numara bulunamadı!");
+            } else alert("Üye bulunamadı!");
         }
     },
 
@@ -203,7 +201,7 @@ const app = {
         document.getElementById('gate-page').style.display = 'none';
         document.getElementById('auth-selection').style.display = 'none';
         document.getElementById(id).style.display = 'block';
-        if(id === 'admin-panel') this.genQR();
+        if(id === 'admin-panel') { this.genQR(); this.renderAdmin(); }
     },
 
     addMember() {
@@ -213,16 +211,14 @@ const app = {
         if(!n || !p) return;
 
         let sess = parseInt(pk);
-        let duration = (pk === '8' ? 1 : 2);
-        let start = new Date();
         let end = new Date();
-        end.setMonth(start.getMonth() + duration);
+        end.setMonth(end.getMonth() + (pk === '8' ? 1 : 2));
 
         this.db.members.push({
             id: Date.now(), name: n, phone: p, sessions: sess,
-            start: start.toLocaleDateString('tr-TR'),
             end: end.toLocaleDateString('tr-TR'),
-            endRaw: end.getTime()
+            endRaw: end.getTime(),
+            payments: [{ date: new Date().toLocaleDateString('tr-TR'), amount: sess * 250, desc: pk + ' Seans Paket' }]
         });
         this.save(); this.renderAdmin();
         document.getElementById('mName').value = ""; document.getElementById('mPhone').value = "";
@@ -230,27 +226,31 @@ const app = {
 
     renderAdmin() {
         const list = document.getElementById('admin-list');
-        list.innerHTML = "";
+        list.innerHTML = "<h3>Üye Listesi</h3>";
         this.db.members.forEach(m => {
             list.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b>${m.name}</b><br><small>Seans: ${m.sessions} | Bitiş: ${m.end}</small></div>
-                <div>
-                    <button onclick="app.updateSess(${m.id}, 1)" style="background:var(--accent); border:none; width:30px; height:30px; border-radius:50%; font-weight:800;">+</button>
-                    <button onclick="app.delMember(${m.id})" style="color:var(--danger); background:none; border:none; margin-left:10px;">Sil</button>
-                </div>
+                <div><b>${m.name}</b><br><small>Sess: ${m.sessions} | Bitiş: ${m.end}</small></div>
+                <button onclick="app.del(${m.id})" style="color:var(--danger); background:none; border:none;">SİL</button>
             </div>`;
         });
     },
 
-    updateSess(id, val) { const m = this.db.members.find(x => x.id === id); m.sessions += val; this.save(); this.renderAdmin(); },
-    delMember(id) { if(confirm("Üye silinsin mi?")) { this.db.members = this.db.members.filter(x => x.id !== id); this.save(); this.renderAdmin(); } },
-
     renderUser() {
         document.getElementById('u-welcome').innerText = "Merhaba, " + this.user.name;
         document.getElementById('u-sess').innerText = this.user.sessions;
-        document.getElementById('u-start').innerText = this.user.start;
-        document.getElementById('u-end').innerText = this.user.end;
-        if(Date.now() > this.user.endRaw) document.getElementById('u-expiry').innerText = "⚠️ ÜYELİK SÜRENİZ DOLMUŞTUR!";
+        document.getElementById('u-expiry').innerText = "Bitiş Tarihi: " + this.user.end;
+        
+        const pList = document.getElementById('u-payment-list');
+        pList.innerHTML = "";
+        let total = 0;
+        this.user.payments.forEach(p => {
+            total += p.amount;
+            pList.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span>${p.date} - ${p.desc}</span>
+                <b>₺${p.amount}</b>
+            </div>`;
+        });
+        document.getElementById('u-total-paid').innerText = "₺ " + total.toFixed(2);
     },
 
     switchTab(id, el) {
@@ -263,31 +263,33 @@ const app = {
     startScanner() {
         document.getElementById('reader').style.display = 'block';
         const sc = new Html5Qrcode("reader");
-        sc.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (t) => { this.checkQR(t); sc.stop(); document.getElementById('reader').style.display='none'; });
+        sc.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (t) => { this.validateQR(t); sc.stop(); document.getElementById('reader').style.display='none'; });
     },
 
     scanFromGallery(e) {
         const file = e.target.files[0];
         if(!file) return;
-        new Html5Qrcode("reader").scanFile(file, true).then(t => this.checkQR(t)).catch(() => alert("QR Okunamadı!"));
+        const sc = new Html5Qrcode("reader");
+        sc.scanFile(file, true).then(t => this.validateQR(t)).catch(() => alert("QR Okunamadı! Fotoğrafın net olduğundan emin olun."));
     },
 
-    checkQR(t) {
-        if(t === "STUDIO-FINAL-2024") {
+    validateQR(t) {
+        if(t === "STUDIO-V17-PRO") {
             if(this.user.sessions > 0) {
                 this.user.sessions--; this.save(); this.renderUser();
-                alert("Derse giriş başarılı! Kalan seans: " + this.user.sessions);
+                alert("Seans başarıyla düşüldü!");
             } else alert("Seansınız kalmadı!");
         }
     },
 
-    genQR() { document.getElementById("admin-qr").innerHTML = ""; new QRCode(document.getElementById("admin-qr"), { text: "STUDIO-FINAL-2024", width: 150, height: 150 }); },
+    genQR() { document.getElementById("admin-qr").innerHTML = ""; new QRCode(document.getElementById("admin-qr"), { text: "STUDIO-V17-PRO", width: 140, height: 140 }); },
     checkRemember() {
-        const r = localStorage.getItem('sm_v16_rem');
-        if(r) { const d = JSON.parse(r); document.getElementById('gate-input').value = d.val; ui.mode = d.mode; this.processLogin(); }
+        const r = localStorage.getItem('sm_v17_auth');
+        if(r) { const d = JSON.parse(r); document.getElementById('gate-input').value = d.key; ui.mode = d.mode; this.processLogin(); }
     },
-    logout() { localStorage.removeItem('sm_v16_rem'); location.reload(); },
-    save() { localStorage.setItem('studio_v16', JSON.stringify(this.db)); }
+    logout() { localStorage.removeItem('sm_v17_auth'); location.reload(); },
+    save() { localStorage.setItem('studio_v17', JSON.stringify(this.db)); },
+    del(id) { if(confirm("Silinsin mi?")) { this.db.members = this.db.members.filter(x => x.id !== id); this.save(); this.renderAdmin(); } }
 };
 </script>
 </body>
