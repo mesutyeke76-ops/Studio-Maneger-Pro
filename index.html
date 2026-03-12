@@ -3,248 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Diamond Pro | Ultimate Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Nova Studio | Dinamik Yönetim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #000000;
-            --card: #1c1c1e;
-            --accent: #d2fe00; /* Resimlerdeki o özel sarı-yeşil tonu */
-            --text: #ffffff;
-            --muted: #8e8e93;
-            --border: #2c2c2e;
+            --bg: #000000; --card: #1c1c1e; --accent: #00f2ff;
+            --text: #ffffff; --muted: #8e8e93; --border: #2c2c2e;
         }
-
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-            background-color: var(--bg);
-            color: var(--text);
-            padding-bottom: 100px;
-            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; 
+            background-color: var(--bg); color: var(--text); padding-bottom: 100px;
         }
 
-        /* --- UI BİLEŞENLERİ (RESİMDEKİ GİBİ) --- */
+        /* --- SPLASH --- */
+        #splash { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .n-logo { width: 70px; height: 70px; border: 3px solid var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 35px; font-weight: 800; color: var(--accent); }
+
+        /* --- GENEL TASARIM --- */
+        .header { padding: 50px 20px 10px; display: flex; align-items: center; gap: 15px; }
+        .glass-card { background: var(--card); border-radius: 24px; padding: 20px; margin: 15px; border: 1px solid var(--border); }
         
-        .header-logo {
-            padding: 60px 20px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        /* --- DİYET & KALORİ --- */
+        .calorie-circle {
+            width: 180px; height: 180px; margin: 20px auto; border-radius: 50%;
+            background: conic-gradient(var(--accent) var(--p, 0deg), #2c2c2e 0);
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .calorie-circle::after { content: ""; position: absolute; inset: 12px; background: var(--bg); border-radius: 50%; }
+        .c-data { position: relative; z-index: 2; text-align: center; }
+
+        /* --- INPUTS --- */
+        input, textarea, select {
+            width: 100%; padding: 12px; margin-top: 10px; border-radius: 12px;
+            border: 1px solid var(--border); background: #2c2c2e; color: white; box-sizing: border-box;
+        }
+        .btn {
+            width: 100%; padding: 15px; margin-top: 15px; border-radius: 12px;
+            border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer;
         }
 
-        .logo-circle {
-            width: 40px; height: 40px;
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; color: var(--accent);
-        }
-
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 20px;
-        }
-
-        .menu-card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 14px;
-            border: 1px solid var(--border);
-        }
-
-        .icon-box {
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-        }
-
-        /* --- KALORİ HALKASI MODÜLÜ --- */
-        .nutrition-header { text-align: center; padding: 20px; }
-        
-        .progress-circle {
-            position: relative;
-            width: 200px; height: 200px;
-            margin: 20px auto;
-            border-radius: 50%;
-            background: conic-gradient(var(--accent) 75%, #2c2c2e 0); /* Örnek %75 doluluk */
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .progress-circle::before {
-            content: "";
-            position: absolute;
-            width: 170px; height: 170px;
-            background: var(--bg);
-            border-radius: 50%;
-        }
-
-        .inner-text {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-        }
-
-        /* --- LİSTE TASARIMI (RESİMDEKİ GİBİ) --- */
-        .session-item {
-            background: var(--card);
-            margin: 10px 20px;
-            padding: 18px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid var(--accent);
-        }
-
-        /* --- NAVİGASYON (RESİMDEKİ GİBİ) --- */
+        /* --- NAV --- */
         .nav-bar {
-            position: fixed;
-            bottom: 0; width: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around;
-            padding: 15px 0 35px;
-            border-top: 1px solid var(--border);
+            position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-around; padding: 12px 0 35px; border-top: 1px solid var(--border);
         }
+        .nav-tab { background: none; border: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; }
+        .nav-tab.active { color: var(--accent); }
 
-        .nav-item { color: var(--muted); text-align: center; font-size: 10px; border:none; background:none; }
-        .nav-item.active { color: var(--accent); }
-        
-        .center-btn {
-            width: 55px; height: 55px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: black;
-            margin-top: -40px;
-            box-shadow: 0 0 20px rgba(210, 254, 0, 0.3);
-        }
-
-        .page { display: none; }
-        .active-page { display: block; animation: slideUp 0.3s ease-out; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .page { display: none; padding: 10px; }
+        .active-page { display: block; animation: fade 0.3s ease; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="home" class="page active-page">
-    <div class="header-logo">
-        <div class="logo-circle">D</div>
-        <div>
-            <div style="font-weight: 800; font-size: 18px;">Diamond Pro</div>
-            <div style="font-size: 12px; color: var(--muted);">Hoş geldin, Yönetici</div>
+    <div id="splash">
+        <div class="n-logo">N</div>
+        <h2 style="margin-top:20px; letter-spacing:3px;">NOVA STUDIO</h2>
+    </div>
+
+    <div id="p-admin" class="page active-page">
+        <div class="header">
+            <h2 style="margin:0">Eğitmen Paneli</h2>
+        </div>
+        
+        <div class="glass-card">
+            <h3>Diyet Listesi Gönder</h3>
+            <select id="targetMember">
+                <option value="">Üye Seçin...</option>
+                <option value="Uye1">Yeni Üye #1</option>
+            </select>
+            <textarea id="dietContent" rows="4" placeholder="Diyet listesini buraya yazın..."></textarea>
+            <button class="btn" onclick="sendDiet()">Listeyi Gönder</button>
+        </div>
+
+        <div class="glass-card">
+            <h3>Üye Listesi</h3>
+            <div id="memberList" style="color:var(--muted); font-size:14px;">Henüz kayıtlı üye yok.</div>
         </div>
     </div>
 
-    <div class="grid-menu">
-        <div class="menu-card" onclick="showP('mems')">
-            <div class="icon-box" style="background: #d2fe0022; color: var(--accent);">👥</div>
-            Üyeler
+    <div id="p-diet" class="page">
+        <div class="header">
+            <h2 style="margin:0">Kalori Takibi</h2>
         </div>
-        <div class="menu-card">
-            <div class="icon-box" style="background: #ffb80022; color: #ffb800;">📅</div>
-            Seanslar
-        </div>
-        <div class="menu-card">
-            <div class="icon-box" style="background: #007aff22; color: #007aff;">💰</div>
-            Finans
-        </div>
-        <div class="menu-card">
-            <div class="icon-box" style="background: #ff2d5522; color: #ff2d55;">🏋️</div>
-            Eğitmenler
-        </div>
-    </div>
 
-    <div style="padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
-        <h3>Bugünkü Seanslar</h3>
-        <span style="color: var(--accent); font-size: 12px;">Takvim ></span>
-    </div>
-
-    <div class="session-item">
-        <div>
-            <div style="font-weight: 600;">Mahmut Tozkoparan</div>
-            <div style="font-size: 12px; color: var(--muted);">10:05 - 11:05</div>
+        <div class="calorie-circle" id="wheel">
+            <div class="c-data">
+                <div style="font-size:11px; color:var(--muted)">Alınan</div>
+                <div style="font-size:32px; font-weight:800;"><span id="curCal">0</span></div>
+                <div style="font-size:11px; color:var(--accent)">Hedef 2200</div>
+            </div>
         </div>
-    </div>
-    <div class="session-item">
-        <div>
-            <div style="font-weight: 600;">Nur Genç</div>
-            <div style="font-size: 12px; color: var(--muted);">12:05 - 13:05</div>
+
+        <div class="glass-card">
+            <h3>Besin Ekle</h3>
+            <input type="text" id="foodName" placeholder="Ne yedin?">
+            <input type="number" id="foodCal" placeholder="Kalori">
+            <button class="btn" onclick="addCalorie()">Ekle</button>
         </div>
-    </div>
-</div>
 
-<div id="diet" class="page">
-    <div class="nutrition-header">
-        <h2 style="margin-bottom:0">Doğru beslenme ve kalori takibi</h2>
-    </div>
-
-    <div class="progress-circle">
-        <div class="inner-text">
-            <div style="font-size: 12px; color: var(--muted);">Şuanki</div>
-            <div style="font-size: 32px; font-weight: 800;">1800 <small style="font-size:14px">kal</small></div>
-            <div style="font-size: 11px; color: var(--accent);">Hedef 2136 kal</div>
-        </div>
-    </div>
-
-    <div style="display: flex; justify-content: space-around; padding: 10px 40px; font-size: 12px;">
-        <div style="text-align:center"><div style="color:#007aff">● 41g</div> Karb</div>
-        <div style="text-align:center"><div style="color:#ffb800">● 50g</div> Protein</div>
-        <div style="text-align:center"><div style="color:#ff2d55">● 40g</div> Yağ</div>
-    </div>
-
-    <div class="session-item" style="border:none; margin-top:30px;">
-        <div style="display:flex; align-items:center; gap:15px;">
-            <div style="font-size:24px">🥗</div>
-            <div>
-                <div style="font-weight:600">Besin Kalorisi Hesapla</div>
-                <div style="font-size:11px; color:var(--muted)">Beslenme</div>
+        <div class="glass-card">
+            <h3>Eğitmenimden Diyet Listesi</h3>
+            <div id="receivedDiet" style="background:#2c2c2e; padding:15px; border-radius:12px; font-size:14px; color:#00f2ff; min-height:50px;">
+                Henüz bir liste gönderilmedi.
             </div>
         </div>
     </div>
-</div>
 
-<nav class="nav-bar">
-    <button class="nav-item active" onclick="showP('home', this)">
-        <div style="font-size:20px">🏠</div>
-        Ana Sayfa
-    </button>
-    <button class="nav-item" onclick="showP('diet', this)">
-        <div style="font-size:20px">🍎</div>
-        Beslenme
-    </button>
-    <div class="center-btn">＋</div>
-    <button class="nav-item">
-        <div style="font-size:20px">📅</div>
-        Takvim
-    </button>
-    <button class="nav-item">
-        <div style="font-size:20px">👤</div>
-        Profil
-    </button>
-</nav>
+    <nav class="nav-bar">
+        <button class="nav-tab active" onclick="showP('p-admin', this)"><span>🏠</span>Eğitmen</button>
+        <button class="nav-tab" onclick="showP('p-diet', this)"><span>🍎</span>Diyetim</button>
+        <button class="nav-tab"><span>📅</span>Takvim</button>
+        <button class="nav-tab"><span>👤</span>Profil</button>
+    </nav>
 
-<script>
-    function showP(id, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active-page');
-        if(btn.tagName === 'BUTTON') btn.classList.add('active');
-    }
-</script>
+    <script>
+        // Splash
+        setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 2000);
 
+        let currentCalories = 0;
+        const goal = 2200;
+
+        // Diyet Gönder (Simülasyon)
+        function sendDiet() {
+            const content = document.getElementById('dietContent').value;
+            if(!content) return alert("Lütfen liste içeriğini yazın.");
+            
+            localStorage.setItem('activeDiet', content);
+            alert("Diyet listesi üyeye başarıyla gönderildi!");
+            document.getElementById('dietContent').value = '';
+            loadDiet();
+        }
+
+        // Diyet Yükle
+        function loadDiet() {
+            const diet = localStorage.getItem('activeDiet');
+            if(diet) {
+                document.getElementById('receivedDiet').innerText = diet;
+            }
+        }
+
+        // Kalori Ekle
+        function addCalorie() {
+            const cal = parseInt(document.getElementById('foodCal').value);
+            if(!cal) return;
+
+            currentCalories += cal;
+            document.getElementById('curCal').innerText = currentCalories;
+            
+            // Halka ilerlemesi hesapla (360 derece üzerinden)
+            const percent = Math.min((currentCalories / goal) * 360, 360);
+            document.getElementById('wheel').style.setProperty('--p', percent + 'deg');
+            
+            document.getElementById('foodCal').value = '';
+            document.getElementById('foodName').value = '';
+        }
+
+        function showP(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active-page');
+            btn.classList.add('active');
+            if(id === 'p-diet') loadDiet();
+        }
+    </script>
 </body>
 </html>
