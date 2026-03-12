@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Studio Manager Pro | V11</title>
+    <title>Studio Manager Pro | V12</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -13,125 +13,108 @@
             --text: #ffffff; --muted: #8e8e93; --border: #1c1c1e; --danger: #ff3b30;
         }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 80px; }
 
-        /* --- 🎬 PROFESYONEL AÇILIŞ ANİMASYONU --- */
-        #splash {
-            position: fixed; inset: 0; background: #000; z-index: 100000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
-        }
-        .logo-wrap { position: relative; width: 100px; height: 100px; }
-        .logo-circle {
-            position: absolute; inset: 0; border: 2px solid var(--accent);
-            border-radius: 50%; border-top-color: transparent;
-            animation: spin 1s linear infinite;
-        }
-        .logo-text {
-            position: absolute; inset: 0; display: flex; align-items: center; 
-            justify-content: center; font-size: 40px; font-weight: 800; color: var(--accent);
-        }
+        /* --- SPLASH --- */
+        #splash { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s ease-in-out; }
+        .loader { width: 50px; height: 50px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- 🚪 MODAL & GİRİŞ --- */
-        .auth-container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .auth-btn { width: 100%; max-width: 300px; padding: 18px; margin: 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
-        .auth-btn:hover { background: var(--accent); color: black; }
-        
-        /* --- PANEL TASARIMI --- */
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; }
-        .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; }
-        .badge-active { background: rgba(210, 254, 0, 0.1); color: var(--accent); }
-        .badge-passive { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
-
+        /* --- AUTH --- */
+        .auth-container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); width: 100%; }
         input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; }
-        .btn-action { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; margin-top: 10px; }
 
-        /* Üye Listesi Tasarımı */
-        .member-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 15px 0; cursor: pointer; }
-        .member-info h4 { margin: 0; font-size: 16px; }
-        .member-info small { color: var(--muted); font-size: 12px; }
-
-        /* Kamera ve QR */
-        #reader { width: 100%; border-radius: 20px; overflow: hidden; margin-top: 10px; }
-        #qr-display { background: white; padding: 15px; border-radius: 20px; display: inline-block; }
+        /* --- PANEL --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; }
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18,18,20,0.95); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { color: var(--muted); font-size: 10px; text-align: center; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        
+        .member-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        #reader { width: 100%; border-radius: 20px; overflow: hidden; display: none; margin-top: 10px; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; background: rgba(210, 254, 0, 0.1); color: var(--accent); }
     </style>
 </head>
-<body>
+<body onload="app.init()">
 
 <div id="splash">
-    <div class="logo-wrap">
-        <div class="logo-circle"></div>
-        <div class="logo-text">S</div>
-    </div>
-    <h2 style="margin-top: 20px; letter-spacing: 4px; font-weight: 200;">STUDIO PRO</h2>
+    <div class="loader"></div>
+    <h2 style="margin-top: 20px; letter-spacing: 5px; font-weight: 200;">STUDIO PRO</h2>
 </div>
 
-<div id="auth-selection" class="auth-container" style="display: none;">
-    <h1 style="margin-bottom: 40px;">Hoş Geldiniz</h1>
-    <button class="auth-btn" onclick="ui.showGate('admin')"><span>👑</span> Yönetici Girişi</button>
-    <button class="auth-btn" onclick="ui.showGate('member')"><span>👤</span> Üye Girişi</button>
+<div id="auth-selection" class="auth-container" style="display:none;">
+    <h1>Studio Manager</h1>
+    <button class="btn" onclick="ui.showGate('admin')">👑 Yönetici Girişi</button>
+    <button class="btn" style="background:var(--card); color:white; border:1px solid var(--border);" onclick="ui.showGate('member')">👤 Üye Girişi</button>
 </div>
 
-<div id="gate-page" class="auth-container" style="display: none;">
-    <div class="card" style="width: 100%; max-width: 350px;">
+<div id="gate-page" class="auth-container" style="display:none;">
+    <div class="card" style="max-width:350px;">
         <h3 id="gate-title">Giriş</h3>
-        <input type="password" id="gate-input" placeholder="Şifre veya Telefon No">
-        <button class="btn-action" onclick="app.processGate()">Onayla</button>
-        <button onclick="ui.backToSelection()" style="background:none; border:none; color:var(--muted); margin-top:15px; width:100%;">Geri Dön</button>
+        <input type="password" id="gate-input" placeholder="">
+        <button class="btn" onclick="app.processLogin()">Giriş Yap</button>
+        <button onclick="ui.back()" style="background:none; border:none; color:var(--muted); margin-top:15px;">Geri</button>
     </div>
 </div>
 
 <div id="admin-panel" class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2>Stüdyo Yönetimi</h2>
-        <button onclick="ui.logout()" class="badge badge-passive" style="border:none;">Çıkış</button>
+    <div class="member-header">
+        <h2>Yönetim</h2>
+        <button onclick="location.reload()" class="badge">Çıkış</button>
     </div>
-
-    <div class="card" style="text-align: center;">
-        <b>Stüdyo QR Kodu</b><br><small>Üyelere bu kodu okutun</small><br><br>
-        <div id="qr-display"></div>
+    <div class="card" style="text-align:center;">
+        <b>Sabit Stüdyo QR</b><br>
+        <div id="admin-qr" style="background:white; padding:10px; display:inline-block; margin:15px; border-radius:15px;"></div>
     </div>
-
     <div class="card">
-        <h3>Yeni Üye</h3>
+        <h3>Üye Ekle</h3>
         <input type="text" id="mName" placeholder="Ad Soyad">
-        <input type="tel" id="mPhone" placeholder="Telefon No">
-        <input type="number" id="mSess" placeholder="Seans Sayısı">
-        <button class="btn-action" onclick="app.addMember()">Kaydet</button>
+        <input type="tel" id="mPhone" placeholder="Telefon (Giriş için)">
+        <input type="number" id="mSess" placeholder="Seans">
+        <button class="btn" onclick="app.addMember()">Kaydet</button>
     </div>
-
-    <h3>Üyeler (Aktif/Pasif)</h3>
-    <div id="admin-member-list"></div>
-
-    <div class="card" style="margin-top: 40px;">
-        <h4>Sistem Ayarları</h4>
-        <button class="btn-action" style="background:#1c1c1e; color:white;" onclick="app.changeAdminPass()">Şifreyi Değiştir</button>
-    </div>
+    <div id="admin-list"></div>
 </div>
 
 <div id="member-panel" class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="u-name">Merhaba</h2>
-        <button onclick="ui.logout()" class="badge badge-passive" style="border:none;">Çıkış</button>
+    <div class="member-header">
+        <h2 id="u-welcome">Merhaba</h2>
+        <span class="badge" id="u-badge">Aktif</span>
     </div>
 
-    <div class="card" style="text-align: center;">
-        <span style="color:var(--muted);">Kalan Seans</span>
-        <h1 id="u-sess" style="font-size: 60px; margin: 10px 0; color:var(--accent);">0</h1>
+    <div id="u-home" class="u-tab active">
+        <div class="card" style="text-align:center;">
+            <small>KALAN SEANS</small>
+            <h1 id="u-sess" style="font-size:50px; color:var(--accent); margin:10px 0;">0</h1>
+            <div id="reader"></div>
+            <button class="btn" id="cam-start" onclick="app.startScanner()">📷 Kamerayı Aç</button>
+            <input type="file" id="qr-file" accept="image/*" style="display:none;" onchange="app.scanFromGallery(event)">
+            <button class="btn" style="background:#1c1c1e; color:white;" onclick="document.getElementById('qr-file').click()">🖼️ Galeriden QR Yükle</button>
+        </div>
     </div>
 
-    <div class="card" style="text-align: center;">
-        <b>Seans Düşmek İçin Okutun</b>
-        <div id="reader"></div>
-        <button class="btn-action" id="cam-btn" onclick="app.startMemberScanner()">📷 Kamerayı Başlat</button>
+    <div id="u-cal" class="u-tab" style="display:none;">
+        <h3>Ders Programı</h3>
+        <div class="card">09:00 - Reformer Pilates</div>
+        <div class="card">18:30 - Yoga Flow</div>
     </div>
 
-    <div class="card">
-        <small>Kayıt Tarihi:</small> <b id="u-date">--</b>
+    <div id="u-diet" class="u-tab" style="display:none;">
+        <h3>Size Özel Diyet</h3>
+        <div class="card">
+            <b>Kahvaltı:</b> 2 Haşlanmış Yumurta, Lor<br>
+            <b>Öğle:</b> Izgara Tavuk, Mevsim Salata
+        </div>
     </div>
 </div>
+
+<nav class="nav" id="member-nav">
+    <div class="nav-item active" onclick="ui.tab('u-home', this)">🏠<br>Ana Sayfa</div>
+    <div class="nav-item" onclick="ui.tab('u-cal', this)">📅<br>Takvim</div>
+    <div class="nav-item" onclick="ui.tab('u-diet', this)">🍎<br>Diyet</div>
+</nav>
 
 <script>
 const ui = {
@@ -139,124 +122,116 @@ const ui = {
         this.mode = mode;
         document.getElementById('auth-selection').style.display = 'none';
         document.getElementById('gate-page').style.display = 'flex';
-        document.getElementById('gate-title').innerText = mode === 'admin' ? 'Yönetici Girişi' : 'Üye Girişi';
-        document.getElementById('gate-input').placeholder = mode === 'admin' ? 'Yönetici Şifresi' : 'Telefon Numaranız';
+        document.getElementById('gate-input').placeholder = mode === 'admin' ? 'Şifre' : 'Telefon No';
     },
-    backToSelection() {
+    back() {
         document.getElementById('gate-page').style.display = 'none';
         document.getElementById('auth-selection').style.display = 'flex';
     },
-    logout() { location.reload(); }
+    tab(id, el) {
+        document.querySelectorAll('.u-tab').forEach(t => t.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+    }
 };
 
 const app = {
-    db: JSON.parse(localStorage.getItem('studio_v11')) || { 
-        members: [], 
-        adminPass: "1234" 
-    },
-    currentMember: null,
+    db: JSON.parse(localStorage.getItem('studio_v12')) || { members: [], adminPass: "1234" },
+    user: null,
 
     init() {
         setTimeout(() => {
-            document.getElementById('splash').style.transform = 'translateY(-100%)';
-            document.getElementById('auth-selection').style.display = 'flex';
-        }, 2500);
-        this.renderAdminQR();
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('auth-selection').style.display = 'flex';
+            }, 800);
+        }, 2000);
+        this.genAdminQR();
     },
 
-    processGate() {
+    processLogin() {
         const val = document.getElementById('gate-input').value;
         if(ui.mode === 'admin') {
             if(val === this.db.adminPass) {
                 document.getElementById('gate-page').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-                this.renderAdminMembers();
-            } else alert("Hatalı Şifre!");
+                this.renderAdmin();
+            }
         } else {
-            const user = this.db.members.find(m => m.phone === val);
-            if(user) {
-                this.currentMember = user;
+            const m = this.db.members.find(x => x.phone === val);
+            if(m) {
+                this.user = m;
                 document.getElementById('gate-page').style.display = 'none';
                 document.getElementById('member-panel').style.display = 'block';
-                this.renderUserPanel();
-            } else alert("Kayıt bulunamadı!");
+                document.getElementById('member-nav').style.display = 'flex';
+                this.renderUser();
+            } else alert("Üye bulunamadı!");
         }
     },
 
     addMember() {
-        const name = document.getElementById('mName').value;
-        const phone = document.getElementById('mPhone').value;
-        const sess = parseInt(document.getElementById('mSess').value);
-        if(!name || !phone) return;
-
-        this.db.members.push({
-            id: Date.now(),
-            name, phone, sessions: sess,
-            date: new Date().toLocaleDateString('tr-TR'),
-            active: sess > 0
-        });
-        this.save(); this.renderAdminMembers();
-        document.getElementById('mName').value = ""; document.getElementById('mPhone').value = "";
-    },
-
-    renderAdminMembers() {
-        const list = document.getElementById('admin-member-list');
-        list.innerHTML = "";
-        this.db.members.sort((a,b) => b.active - a.active).forEach(m => {
-            list.innerHTML += `
-                <div class="member-row">
-                    <div class="member-info">
-                        <h4>${m.name} <span class="badge ${m.active ? 'badge-active' : 'badge-passive'}">${m.active ? 'AKTİF' : 'PASİF'}</span></h4>
-                        <small>Kayıt: ${m.date} | Kalan: ${m.sessions} Seans</small>
-                    </div>
-                </div>`;
-        });
-    },
-
-    renderAdminQR() {
-        document.getElementById('qr-display').innerHTML = "";
-        new QRCode(document.getElementById("qr-display"), { text: "STUDIO-AUTH-DROP", width: 160, height: 160 });
-    },
-
-    renderUserPanel() {
-        document.getElementById('u-name').innerText = "Merhaba, " + this.currentMember.name;
-        document.getElementById('u-sess').innerText = this.currentMember.sessions;
-        document.getElementById('u-date').innerText = this.currentMember.date;
-    },
-
-    startMemberScanner() {
-        document.getElementById('reader').style.display = 'block';
-        document.getElementById('cam-btn').style.display = 'none';
-        const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-        scanner.render((text) => {
-            if(text === "STUDIO-AUTH-DROP") {
-                if(this.currentMember.sessions > 0) {
-                    this.currentMember.sessions--;
-                    this.currentMember.active = this.currentMember.sessions > 0;
-                    this.save();
-                    this.renderUserPanel();
-                    alert("Seans Başarıyla Düştü! Keyifli dersler.");
-                    scanner.clear();
-                    document.getElementById('reader').style.display = 'none';
-                    document.getElementById('cam-btn').style.display = 'block';
-                } else alert("Seansınız kalmamıştır!");
-            }
-        });
-    },
-
-    changeAdminPass() {
-        const newPass = prompt("Yeni yönetici şifresini girin:");
-        if(newPass) {
-            this.db.adminPass = newPass;
-            this.save();
-            alert("Şifre güncellendi!");
+        const n = document.getElementById('mName').value;
+        const p = document.getElementById('mPhone').value;
+        const s = document.getElementById('mSess').value;
+        if(n && p) {
+            this.db.members.push({ id: Date.now(), name: n, phone: p, sessions: parseInt(s)||0 });
+            this.save(); this.renderAdmin();
+            document.getElementById('mName').value = ""; document.getElementById('mPhone').value = "";
         }
     },
 
-    save() { localStorage.setItem('studio_v11', JSON.stringify(this.db)); }
-};
+    renderAdmin() {
+        const list = document.getElementById('admin-list');
+        list.innerHTML = "<h3>Üyeler</h3>";
+        this.db.members.forEach(m => {
+            list.innerHTML += `<div class="card"><b>${m.name}</b><br><small>${m.phone} | ${m.sessions} Seans</small></div>`;
+        });
+    },
 
-app.init();
+    genAdminQR() {
+        new QRCode(document.getElementById("admin-qr"), { text: "STUDIO-AUTH-123", width: 140, height: 140 });
+    },
+
+    renderUser() {
+        document.getElementById('u-welcome').innerText = "Merhaba, " + this.user.name;
+        document.getElementById('u-sess').innerText = this.user.sessions;
+    },
+
+    // --- QR TARAMA (KAMERA & GALERİ) ---
+    startScanner() {
+        document.getElementById('reader').style.display = 'block';
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => {
+            this.validateQR(text);
+            html5QrCode.stop();
+            document.getElementById('reader').style.display = 'none';
+        });
+    },
+
+    scanFromGallery(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.scanFile(file, true)
+            .then(text => { this.validateQR(text); })
+            .catch(err => alert("QR Kod okunamadı!"));
+    },
+
+    validateQR(text) {
+        if(text === "STUDIO-AUTH-123") {
+            if(this.user.sessions > 0) {
+                this.user.sessions--;
+                this.save();
+                this.renderUser();
+                alert("Seans düştü! Kalan: " + this.user.sessions);
+            } else alert("Seansınız kalmadı!");
+        }
+    },
+
+    save() { localStorage.setItem('studio_v12', JSON.stringify(this.db)); }
+};
 </script>
 </body>
 </html>
