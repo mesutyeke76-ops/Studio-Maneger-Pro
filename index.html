@@ -3,159 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Diamond Pro | Yönetim Paneli</title>
+    <title>Nova Studio Pro | Yönetim</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --bg: #000000; --card: #1c1c1e; --accent: #d2fe00;
-            --text: #ffffff; --muted: #8e8e93; --border: #2c2c2e;
-        }
+        :root { --bg: #000000; --card: #1c1c1e; --accent: #d2fe00; --text: #ffffff; --muted: #8e8e93; --border: #2c2c2e; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 100px; }
-
+        body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 90px; overflow-x: hidden; }
+        
+        /* UI Components */
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
         .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        input, select, textarea { width: 100%; padding: 14px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: #262629; color: white; font-size: 14px; }
+        .btn { width: 100%; padding: 16px; margin-top: 10px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; }
+        .btn-sm { padding: 8px 12px; font-size: 12px; margin-top: 5px; width: auto; }
         
-        /* Grid Menü (Resimdeki gibi) */
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .menu-btn { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; cursor: pointer; }
-        .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-
-        /* Bugünkü Seanslar Kartı */
-        .session-item { background: #262629; border-left: 4px solid var(--accent); padding: 15px; border-radius: 15px; margin-bottom: 10px; }
-        
-        /* Alt Navigasyon */
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 0 35px; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-btn { background: none; border: none; color: var(--muted); font-size: 11px; text-align: center; }
+        /* Navigation */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-btn { background: none; border: none; color: var(--muted); font-size: 10px; font-weight: 600; text-align: center; }
         .nav-btn.active { color: var(--accent); }
-        .plus-btn { width: 55px; height: 55px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 28px; margin-top: -40px; border: 5px solid var(--bg); box-shadow: 0 4px 15px rgba(210, 254, 0, 0.3); }
+
+        /* Calendar */
+        .cal-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); }
+        .cal-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); background: var(--border); gap: 1px; min-width: 600px; }
+        .cal-cell { background: var(--bg); height: 45px; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: 0.2s; }
+        .cal-header { background: var(--card); color: var(--accent); font-weight: 800; height: 35px; }
+        .slot-busy { background: var(--accent); color: black; font-weight: 800; }
 
         .page { display: none; }
         .page.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        input, select, textarea { width: 100%; padding: 14px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: #262629; color: white; }
-        .btn { width: 100%; padding: 16px; margin-top: 15px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page container active">
-    <div class="header">
-        <div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:40px; height:40px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; color:black; font-weight:800;">D</div>
-                <div><h3 style="margin:0">Diamond Pro</h3><small style="color:var(--muted)">Hoş geldin, Yönetici</small></div>
-            </div>
-        </div>
-        <div style="font-size:20px;">🔔</div>
+    <h2>Yönetim Paneli</h2>
+    <div class="card">
+        <h4>Hızlı Üye Kaydı</h4>
+        <input type="text" id="mName" placeholder="Üye Adı Soyadı">
+        <button class="btn" onclick="app.addMember()">Sisteme Kaydet</button>
     </div>
-
-    <div class="grid-menu">
-        <div class="menu-btn" onclick="app.showPage('page-members')">
-            <div class="icon-box" style="background:rgba(210,254,0,0.1); color:var(--accent);">👥</div>
-            <b>Üyeler</b>
-        </div>
-        <div class="menu-btn" onclick="app.showPage('page-calendar')">
-            <div class="icon-box" style="background:rgba(255,184,0,0.1); color:#ffb800;">📅</div>
-            <b>Seanslar</b>
-        </div>
-        <div class="menu-btn" onclick="app.showPage('page-finance')">
-            <div class="icon-box" style="background:rgba(0,122,255,0.1); color:#007aff;">💰</div>
-            <b>Finans</b>
-        </div>
-        <div class="menu-btn">
-            <div class="icon-box" style="background:rgba(175,82,222,0.1); color:#af52de;">🏋️</div>
-            <b>Eğitmenler</b>
-        </div>
-    </div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3>Bugünkü Seanslar</h3>
-        <small style="color:var(--accent)">Takvim ></small>
-    </div>
-    <div id="sessionList">
-        <div class="session-item"><b>Mahmut Tozkoparan</b><br><small style="color:var(--muted)">10:05 - 11:05</small></div>
-        <div class="session-item"><b>Nur Genç</b><br><small style="color:var(--muted)">12:05 - 13:05</small></div>
-    </div>
+    <h3>Aktif Üyeler</h3>
+    <div id="memberList"></div>
 </div>
 
 <div id="page-finance" class="page container">
-    <h3>Aylık Ciro</h3>
+    <h3>Finansal Durum</h3>
     <div class="card">
-        <canvas id="finChart" style="height:200px;"></canvas>
+        <small style="color:var(--muted)">Toplam Ciro</small>
+        <h2 style="color:var(--accent); font-size:35px; margin:5px 0;">₺<span id="totalCiro">0</span></h2>
+        <canvas id="ciroChart" style="height:150px;"></canvas>
     </div>
     <div class="card">
-        <h4>Yeni Ödeme Al</h4>
-        <input type="number" id="revInp" placeholder="Tutar (₺)">
-        <button class="btn" onclick="app.addRev()">Geliri Kaydet</button>
+        <h4>Paket Satışı Yap</h4>
+        <select id="financeMemberSelect"></select>
+        <select id="packSelect">
+            <option value="4|4000">4 Seans - 4.000₺</option>
+            <option value="8|7500">8 Seans - 7.500₺</option>
+            <option value="12|10500">12 Seans - 10.500₺</option>
+            <option value="16|13000">16 Seans - 13.000₺</option>
+        </select>
+        <button class="btn" onclick="app.sellPack()">Satışı Onayla</button>
+    </div>
+</div>
+
+<div id="page-calendar" class="page container">
+    <h3>Ders Programı</h3>
+    <p style="font-size:12px; color:var(--muted)">Saatlere tıklayarak dersleri dolu/boş işaretleyin.</p>
+    <div class="cal-wrapper">
+        <div class="cal-grid" id="calGrid"></div>
     </div>
 </div>
 
 <div id="page-diet" class="page container">
-    <h3 style="text-align:center">Kalori Takibi</h3>
-    <div class="card" style="text-align:center">
-        <div style="font-size:40px; font-weight:800; color:var(--accent);" id="calDisplay">1800</div>
-        <small>Hedef: 2136 kal</small>
-    </div>
+    <h3>Beslenme Planları</h3>
     <div class="card">
-        <h4>Diyet Listesi Seç</h4>
-        <select onchange="app.setDiet(this.value)">
-            <option value="1200">1200 Kalori</option>
-            <option value="1500">1500 Kalori</option>
-            <option value="1800" selected>1800 Kalori</option>
+        <select id="dietSelect" onchange="app.loadDiet()">
+            <option value="1200">1200 Kalori Planı</option>
+            <option value="1500">1500 Kalori Planı</option>
+            <option value="1800" selected>1800 Kalori Planı</option>
         </select>
-        <div id="dietNote" style="margin-top:20px; color:var(--muted); font-size:14px; white-space:pre-line;"></div>
+        <div id="dietContent" style="margin-top:20px; color:var(--accent); white-space:pre-line; font-size:14px;"></div>
     </div>
 </div>
 
 <nav class="nav">
-    <button class="nav-btn active" onclick="app.showPage('page-home', this)">🏠<br>Ana Sayfa</button>
-    <button class="nav-btn" onclick="app.showPage('page-diet', this)">🍎<br>Beslenme</button>
-    <div class="plus-btn">＋</div>
+    <button class="nav-btn active" onclick="app.showPage('page-home', this)">👥<br>Üyeler</button>
+    <button class="nav-btn" onclick="app.showPage('page-finance', this)">💰<br>Finans</button>
     <button class="nav-btn" onclick="app.showPage('page-calendar', this)">📅<br>Takvim</button>
-    <button class="nav-btn">👤<br>Profil</button>
+    <button class="nav-btn" onclick="app.showPage('page-diet', this)">🍎<br>Diyet</button>
 </nav>
 
 <script>
 const app = {
+    data: JSON.parse(localStorage.getItem('nova_db')) || { members: [], ciro: 0, busySlots: [] },
+    
+    init() {
+        this.renderMembers();
+        this.renderCalendar();
+        this.loadDiet();
+    },
+
     showPage(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(btn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-        if(id === 'page-finance') this.initChart();
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        if(id === 'page-finance') this.updateFinance();
     },
 
-    setDiet(val) {
-        document.getElementById('calDisplay').innerText = val;
-        const diets = {
-            "1200": "Sabah: 1 Yumurta, Lor Peyniri\nÖğle: 100g Tavuk, Salata\nAkşam: Sebze Çorbası",
-            "1500": "Sabah: 2 Yumurta, Zeytin, Tam Buğday\nÖğle: 150g Et, Pilav, Yoğurt\nAkşam: Zeytinyağlı Yemek",
-            "1800": "Sabah: 3 Yumurta, Peynir, Yulaf\nÖğle: 200g Tavuk, Makarna, Salata\nAkşam: Izgara Balık, Sebze"
-        };
-        document.getElementById('dietNote').innerText = diets[val];
+    addMember() {
+        const name = document.getElementById('mName').value;
+        if(!name) return;
+        this.data.members.push({ id: Date.now(), name, sessions: 0 });
+        this.save();
+        this.renderMembers();
+        document.getElementById('mName').value = '';
     },
 
-    initChart() {
-        const ctx = document.getElementById('finChart').getContext('2d');
+    deleteMember(id) {
+        this.data.members = this.data.members.filter(m => m.id !== id);
+        this.save();
+        this.renderMembers();
+    },
+
+    useSession(id) {
+        const m = this.data.members.find(m => m.id === id);
+        if(m && m.sessions > 0) {
+            m.sessions--;
+            this.save();
+            this.renderMembers();
+        } else { alert("Üyenin seansı kalmadı!"); }
+    },
+
+    renderMembers() {
+        const list = document.getElementById('memberList');
+        const select = document.getElementById('financeMemberSelect');
+        list.innerHTML = '';
+        select.innerHTML = '<option value="">Üye Seçiniz...</option>';
+
+        this.data.members.forEach(m => {
+            list.innerHTML += `
+                <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div><b>${m.name}</b><br><small style="color:var(--accent)">${m.sessions} Seans Kaldı</small></div>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-sm btn" style="background:#007aff; color:white;" onclick="app.useSession(${m.id})">Düş</button>
+                        <button class="btn-sm btn" style="background:#ff3b30; color:white;" onclick="app.deleteMember(${m.id})">Sil</button>
+                    </div>
+                </div>`;
+            select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+        });
+    },
+
+    sellPack() {
+        const mId = document.getElementById('financeMemberSelect').value;
+        const [count, price] = document.getElementById('packSelect').value.split('|').map(Number);
+        if(!mId) return alert("Üye seçin!");
+
+        const m = this.data.members.find(m => m.id == mId);
+        m.sessions += count;
+        this.data.ciro += price;
+        this.save();
+        this.updateFinance();
+        this.renderMembers();
+        alert("Satış Başarılı!");
+    },
+
+    updateFinance() {
+        document.getElementById('totalCiro').innerText = this.data.ciro.toLocaleString();
+        const ctx = document.getElementById('ciroChart').getContext('2d');
         if(window.mChart) window.mChart.destroy();
         window.mChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['May', 'Haz', 'Tem', 'Ağu', 'Eyl'],
-                datasets: [{ label: 'Ciro', data: [8000, 12000, 9500, 15000, 10400], borderColor: '#d2fe00', tension: 0.4 }]
-            },
+            type: 'bar',
+            data: { labels: ['Ciro'], datasets: [{ data: [this.data.ciro], backgroundColor: '#d2fe00' }] },
             options: { plugins: { legend: { display: false } } }
         });
-    }
+    },
+
+    renderCalendar() {
+        const grid = document.getElementById('calGrid');
+        const days = ['Saat', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+        days.forEach(d => grid.innerHTML += `<div class="cal-cell cal-header">${d}</div>`);
+
+        for(let h = 7; h <= 22; h++) {
+            const time = (h<10?'0'+h:h)+':00';
+            grid.innerHTML += `<div class="cal-cell cal-time" style="background:var(--card)">${time}</div>`;
+            for(let d = 1; d <= 7; d++) {
+                const id = `${d}-${h}`;
+                const busy = this.data.busySlots.includes(id);
+                grid.innerHTML += `<div id="slot-${id}" class="cal-cell ${busy?'slot-busy':''}" onclick="app.toggleSlot('${id}')">${busy?'DOLU':''}</div>`;
+            }
+        }
+    },
+
+    toggleSlot(id) {
+        if(this.data.busySlots.includes(id)) {
+            this.data.busySlots = this.data.busySlots.filter(s => s !== id);
+        } else { this.data.busySlots.push(id); }
+        this.save();
+        const el = document.getElementById('slot-'+id);
+        el.classList.toggle('slot-busy');
+        el.innerText = el.classList.contains('slot-busy') ? 'DOLU' : '';
+    },
+
+    loadDiet() {
+        const val = document.getElementById('dietSelect').value;
+        const diets = {
+            "1200": "• Sabah: 1 Yumurta, 1 Dilim Peynir\n• Öğle: 100g Izgara Tavuk, Salata\n• Akşam: Sebze Yemeği, Yoğurt",
+            "1500": "• Sabah: 2 Yumurta, Lor, 1 Dilim Tam Buğday\n• Öğle: 150g Köfte, 3 Kaşık Esmer Pirinç\n• Akşam: 1 Tabak Baklagil, Ayran",
+            "1800": "• Sabah: 3 Yumurta, Zeytin, Yulaf Ezmesi\n• Öğle: 200g Tavuk, Makarna, Bol Salata\n• Akşam: Izgara Balık, Buharda Sebze"
+        };
+        document.getElementById('dietContent').innerText = diets[val];
+    },
+
+    save() { localStorage.setItem('nova_db', JSON.stringify(this.data)); }
 };
-// Başlangıç diyetini yükle
-app.setDiet("1800");
+
+app.init();
 </script>
 </body>
 </html>
