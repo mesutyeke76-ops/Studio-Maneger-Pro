@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Studio Pro">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/144/diamond.png">
+    <title>Studio Manager Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #6366f1; --dark: #0f172a; --bg: #f1f5f9; --card-bg: #ffffff; --text: #334155; --border: #e2e8f0; --danger: #f43f5e; --success: #10b981; }
+        .dark-mode { --bg: #0b1120; --card-bg: #1e293b; --text: #f1f5f9; --border: #334155; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--text); display: flex; transition: 0.3s; min-height: 100vh; padding-top: env(safe-area-inset-top); }
+        nav { width: 260px; height: 100vh; background: var(--dark); color: white; padding: 25px; position: fixed; z-index: 100; }
+        main { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        input, select { padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        .page { display: none; } .active { display: block; }
+        @media (max-width: 768px) { nav { width: 100%; height: 70px; bottom: 0; top: auto; position: fixed; display: flex; padding: 0; justify-content: space-around; align-items: center; } nav h2 { display: none; } main { margin-left: 0; padding: 20px; padding-bottom: 100px; width: 100%; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2 style="color:var(--primary)">💎 STUDIO PRO</h2>
+        <button onclick="showPage('dash')" class="btn" style="color:white">📊 Panel</button>
+        <button onclick="showPage('mems')" class="btn" style="color:white">👥 Üyeler</button>
+        <button onclick="logout()" class="btn" style="color:var(--danger)">🚪 Çıkış</button>
+    </nav>
+    <main>
+        <div id="dash" class="page active">
+            <h1>Hoş Geldiniz</h1>
+            <div class="card"><h3>Toplam Üye</h3><p id="totalMembers" style="font-size:2rem; font-weight:bold;">0</p></div>
+            <div class="card"><canvas id="myChart" style="height:200px;"></canvas></div>
+        </div>
+        <div id="mems" class="page">
+            <h1>Üye Yönetimi</h1>
+            <div class="card">
+                <input type="text" id="name" placeholder="Ad Soyad">
+                <button class="btn btn-primary" onclick="addMember()">Üye Ekle</button>
+            </div>
+            <div id="memberList"></div>
+        </div>
+    </main>
+    <script>
+        let members = JSON.parse(localStorage.getItem('studio_mems')) || [];
+        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function addMember() {
+            let n = document.getElementById('name').value;
+            if(!n) return;
+            members.push({name: n});
+            localStorage.setItem('studio_mems', JSON.stringify(members));
+            render();
+            document.getElementById('name').value = '';
+        }
+        function render() {
+            document.getElementById('totalMembers').innerText = members.length;
+            document.getElementById('memberList').innerHTML = members.map(m => `<div class="card">${m.name}</div>`).join('');
+        }
+        function logout() { if(confirm('Çıkış yapılsın mı?')) { localStorage.clear(); location.reload(); } }
+        window.onload = render;
+    </script>
+</body>
+</html>
