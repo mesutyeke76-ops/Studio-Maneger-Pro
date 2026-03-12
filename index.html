@@ -2,293 +2,96 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Nova Studio | Dinamik Yönetim</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Gym CORE Pro | Secure Cloud</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
     <style>
-        :root {
-            --bg: #000000;
-            --card: #1c1c1e;
-            --accent: #d2fe00; /* Resimlerdeki imza neon yeşil */
-            --text: #ffffff;
-            --muted: #8e8e93;
-            --border: #2c2c2e;
-            --danger: #ff3b30;
+        /* Önceki stillere ek olarak Login ekranı stili */
+        #login-screen {
+            position: fixed; top:0; left:0; width: 100%; height: 100%;
+            background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0; background-color: var(--bg); color: var(--text);
-            padding-bottom: 100px; overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* --- Karşılama Ekranı --- */
-        #splash {
-            position: fixed; inset: 0; background: var(--bg); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-        .logo-box {
-            width: 80px; height: 80px; border: 3px solid var(--accent);
-            border-radius: 22px; display: flex; align-items: center; justify-content: center;
-            font-size: 40px; font-weight: 800; color: var(--accent);
-            box-shadow: 0 0 30px rgba(210, 254, 0, 0.2);
-        }
-
-        /* --- Layout --- */
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { padding: 40px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* --- Kartlar & Formlar --- */
-        .card {
-            background: var(--card); border-radius: 24px; padding: 20px;
-            margin-bottom: 15px; border: 1px solid var(--border);
-        }
-        input, textarea, select {
-            width: 100%; padding: 14px; margin-top: 10px; border-radius: 14px;
-            border: 1px solid var(--border); background: #2c2c2e; color: white;
-            font-family: inherit; font-size: 15px; box-sizing: border-box;
-        }
-        .btn {
-            width: 100%; padding: 16px; margin-top: 15px; border-radius: 16px;
-            border: none; background: var(--accent); color: black;
-            font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s;
-        }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
-
-        /* --- Dinamik Liste Öğeleri --- */
-        .list-item {
-            background: var(--card); padding: 16px; border-radius: 18px;
-            margin-bottom: 10px; display: flex; justify-content: space-between;
-            align-items: center; border-left: 4px solid var(--accent);
-        }
-
-        /* --- Kalori Halkası (image_1 Tasarımı) --- */
-        .progress-box { text-align: center; padding: 20px; }
-        .circle-svg { width: 200px; height: 200px; transform: rotate(-90deg); }
-        .circle-bg { fill: none; stroke: #2c2c2e; stroke-width: 12; }
-        .circle-bar {
-            fill: none; stroke: var(--accent); stroke-width: 12;
-            stroke-linecap: round; transition: stroke-dashoffset 0.5s ease;
-        }
-        .circle-text {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        /* --- Alt Menü (Nav) --- */
-        .nav-bar {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around; padding: 15px 0 35px;
-            border-top: 1px solid var(--border); z-index: 100;
-        }
-        .nav-btn {
-            background: none; border: none; color: var(--muted);
-            font-size: 10px; font-weight: 600; display: flex;
-            flex-direction: column; align-items: center; gap: 5px; cursor: pointer;
-        }
-        .nav-btn.active { color: var(--accent); }
-        .nav-icon { font-size: 20px; }
-
-        .page { display: none; }
-        .active-page { display: block; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .login-box { background: white; padding: 40px; border-radius: 16px; width: 350px; text-align: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
-    <div id="splash">
-        <div class="logo-box">N</div>
-        <h2 style="margin-top:20px; letter-spacing:2px; font-weight:800;">NOVA STUDIO</h2>
-        <p style="color: var(--muted); font-size: 12px;">Yönetim ve Beslenme Sistemi</p>
-    </div>
-
-    <div id="admin-page" class="page active-page container">
-        <div class="header">
-            <div>
-                <h2 style="margin:0">Eğitmen Paneli</h2>
-                <p style="color: var(--muted); font-size: 12px; margin: 5px 0 0;">Üyeleri ve programları yönetin</p>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3 style="margin-top:0">Yeni Üye Kaydı</h3>
-            <input type="text" id="mName" placeholder="Üye Adı Soyadı">
-            <input type="text" id="mPhone" placeholder="Telefon (Örn: 05xx...)">
-            <button class="btn" onclick="addMember()">Üyeyi Kaydet</button>
-        </div>
-
-        <h3>Kayıtlı Üyeler</h3>
-        <div id="memberList">
-            </div>
-    </div>
-
-    <div id="member-page" class="page container">
-        <div class="header">
-            <h2>Beslenme Takibi</h2>
-        </div>
-
-        <div class="card progress-box" style="position: relative;">
-            <svg class="circle-svg">
-                <circle class="circle-bg" cx="100" cy="100" r="85"></circle>
-                <circle id="progBar" class="circle-bar" cx="100" cy="100" r="85" stroke-dasharray="534" stroke-dashoffset="534"></circle>
-            </svg>
-            <div class="circle-text">
-                <div style="font-size: 12px; color: var(--muted);">Alınan</div>
-                <div style="font-size: 32px; font-weight: 800;"><span id="curCal">0</span></div>
-                <div style="font-size: 11px; color: var(--accent);">Hedef <span id="goalText">2000</span> kal</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3 style="margin-top:0">Besin Girişi</h3>
-            <input type="text" id="foodName" placeholder="Besin Adı">
-            <input type="number" id="foodCal" placeholder="Kalori Değeri">
-            <button class="btn" onclick="updateCalories()">Ekle</button>
-        </div>
-
-        <div class="card">
-            <h3>Eğitmen Notu / Diyet Listesi</h3>
-            <div id="dietDisplay" style="color: var(--accent); font-size: 14px; line-height: 1.6; background: #2c2c2e; padding: 15px; border-radius: 12px;">
-                Henüz bir liste atanmadı.
-            </div>
+    <div id="login-screen">
+        <div class="login-box">
+            <h2 style="color:#0f172a">Yönetici Girişi</h2>
+            <input type="email" id="login-email" placeholder="E-posta" style="width:100%; margin-bottom:10px;">
+            <input type="password" id="login-pass" placeholder="Şifre" style="width:100%; margin-bottom:20px;">
+            <button class="btn btn-primary" style="width:100%" onclick="login()">Giriş Yap</button>
+            <p id="login-error" style="color:red; font-size:0.8rem; margin-top:10px;"></p>
         </div>
     </div>
 
-    <div id="diet-modal" class="page container">
-        <div class="header">
-            <button onclick="showPage('admin-page')" style="background:none; border:none; color:var(--accent); font-weight:800;">← Geri</button>
-            <h2 id="modalTitle">Diyet Yaz</h2>
+    <div id="app-content" class="hidden">
+        <nav>
+            <h2>⚡ GYM CORE</h2>
+            <button onclick="logout()" style="color:var(--danger)">🚪 Çıkış Yap</button>
+        </nav>
         </div>
-        <div class="card">
-            <textarea id="dietText" rows="10" placeholder="Sabah: 2 Yumurta..."></textarea>
-            <input type="number" id="memberGoal" placeholder="Günlük Kalori Hedefi (Örn: 2200)">
-            <button class="btn" onclick="saveDietForMember()">Listeyi Gönder</button>
-        </div>
-    </div>
 
-    <nav class="nav-bar">
-        <button class="nav-btn active" onclick="showPage('admin-page', this)">
-            <span class="nav-icon">👥</span>Yönetim
-        </button>
-        <button class="nav-btn" onclick="showPage('member-page', this)">
-            <span class="nav-icon">🍎</span>Diyetim
-        </button>
-        <button class="nav-btn">
-            <span class="nav-icon">📅</span>Takvim
-        </button>
-        <button class="nav-btn">
-            <span class="nav-icon">👤</span>Profil
-        </button>
-    </nav>
+<script>
+    // 1. ADIM: Firebase Ayarları (Burayı kendi bilgilerinizle doldurmalısınız)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
 
-    <script>
-        // Veritabanı (LocalStorage)
-        let members = JSON.parse(localStorage.getItem('nova_members')) || [];
-        let activeMemberIndex = null;
+    // Firebase'i başlat
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-        // Splash Kaldır
-        setTimeout(() => {
-            const splash = document.getElementById('splash');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 2000);
-
-        // Sayfa Değiştirme
-        function showPage(pageId, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById(pageId).classList.add('active-page');
-            if(btn) {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
+    // 2. ADIM: Güvenlik Kontrolü (Oturum yönetimi)
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // Kullanıcı giriş yapmışsa uygulamayı göster
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("app-content").classList.remove("hidden");
+            loadDataFromCloud(); // Verileri buluttan çek
+        } else {
+            // Giriş yapılmamışsa giriş ekranını göster
+            document.getElementById("login-screen").classList.remove("hidden");
+            document.getElementById("app-content").classList.add("hidden");
         }
+    });
 
-        // Üye Ekle
-        function addMember() {
-            const name = document.getElementById('mName').value;
-            const phone = document.getElementById('mPhone').value;
-            if(!name || !phone) return alert("Lütfen bilgileri girin!");
+    // 3. ADIM: Giriş Fonksiyonu
+    async function login() {
+        const email = document.getElementById("login-email").value;
+        const pass = document.getElementById("login-pass").value;
+        try {
+            await auth.signInWithEmailAndPassword(email, pass);
+        } catch (error) {
+            document.getElementById("login-error").innerText = "Hatalı giriş denemesi!";
+        }
+    }
 
-            members.push({
-                name, phone, diet: '', goal: 2000, current: 0
+    // 4. ADIM: Verileri Buluta Kaydetme (Localstorage yerine)
+    async function addMemberToCloud(member) {
+        try {
+            await db.collection("members").add({
+                ...member,
+                userId: auth.currentUser.uid, // Veriyi bu kullanıcıya kilitle
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            saveData();
-            renderMembers();
-            document.getElementById('mName').value = '';
-            document.getElementById('mPhone').value = '';
+        } catch (e) {
+            alert("Veri kaydedilirken hata oluştu: " + e.message);
         }
+    }
 
-        // Üyeleri Listele
-        function renderMembers() {
-            const list = document.getElementById('memberList');
-            list.innerHTML = members.map((m, index) => `
-                <div class="list-item">
-                    <div>
-                        <div style="font-weight:700;">${m.name}</div>
-                        <div style="font-size:12px; color:var(--muted);">${m.phone}</div>
-                    </div>
-                    <button class="btn" style="width:auto; margin:0; padding:8px 15px; font-size:12px;" onclick="openDietEditor(${index})">Diyet Yaz</button>
-                </div>
-            `).join('');
-        }
-
-        // Diyet Editörü
-        function openDietEditor(index) {
-            activeMemberIndex = index;
-            const m = members[index];
-            document.getElementById('modalTitle').innerText = m.name + " - Diyet";
-            document.getElementById('dietText').value = m.diet;
-            document.getElementById('memberGoal').value = m.goal;
-            showPage('diet-modal');
-        }
-
-        function saveDietForMember() {
-            members[activeMemberIndex].diet = document.getElementById('dietText').value;
-            members[activeMemberIndex].goal = document.getElementById('memberGoal').value || 2000;
-            saveData();
-            alert("Liste başarıyla gönderildi!");
-            showPage('admin-page');
-            syncMemberView();
-        }
-
-        // Kalori Takibi (Üye Görünümü)
-        function updateCalories() {
-            const cal = parseInt(document.getElementById('foodCal').value);
-            if(!cal) return;
-
-            // Simülasyon: İlk üyeyi aktif üye kabul edelim
-            if(members.length === 0) return alert("Önce yönetimden üye ekleyin!");
-            
-            members[0].current += cal;
-            saveData();
-            syncMemberView();
-            document.getElementById('foodName').value = '';
-            document.getElementById('foodCal').value = '';
-        }
-
-        function syncMemberView() {
-            if(members.length === 0) return;
-            const m = members[0]; // Örnek olarak ilk üye verisi
-            document.getElementById('curCal').innerText = m.current;
-            document.getElementById('goalText').innerText = m.goal;
-            document.getElementById('dietDisplay').innerText = m.diet || "Henüz bir liste atanmadı.";
-            
-            // Halka İlerlemesi
-            const prog = Math.min((m.current / m.goal) * 534, 534);
-            document.getElementById('progBar').style.strokeDashoffset = 534 - prog;
-        }
-
-        function saveData() {
-            localStorage.setItem('nova_members', JSON.stringify(members));
-        }
-
-        // İlk Çalıştırma
-        renderMembers();
-        syncMemberView();
-
-    </script>
+    // Çıkış Yap
+    function logout() { auth.signOut(); }
+</script>
 </body>
 </html>
