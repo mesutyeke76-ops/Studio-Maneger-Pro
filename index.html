@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Studio Manager Pro | V13</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap" rel="stylesheet">
+    <title>Studio Manager Pro | V14</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
@@ -13,248 +13,267 @@
             --text: #ffffff; --muted: #8e8e93; --border: #1c1c1e; --danger: #ff3b30;
         }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 90px; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* --- SPLASH --- */
-        #splash { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s; }
-        .loader { width: 45px; height: 45px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- AUTH --- */
-        .auth-container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
-        .card { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 15px; border: 1px solid var(--border); width: 100%; }
-        .input-group { position: relative; width: 100%; margin-top: 10px; }
-        input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; font-size: 15px; }
-        .toggle-pass { position: absolute; right: 15px; top: 18px; color: var(--muted); cursor: pointer; font-size: 12px; }
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; margin-top: 12px; }
+        /* --- UI ELEMENTS --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; }
+        .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); width: 100%; }
+        input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; background: rgba(210, 254, 0, 0.1); color: var(--accent); }
         
-        /* --- NAVIGATION --- */
+        /* --- NAV --- */
         .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18,18,20,0.95); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 15px 0 35px; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-item { color: var(--muted); font-size: 10px; text-align: center; cursor: pointer; }
+        .nav-item { color: var(--muted); font-size: 11px; text-align: center; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; }
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; background: rgba(210, 254, 0, 0.1); color: var(--accent); }
+        /* --- AUTH --- */
+        #auth-page { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+        
         #reader { width: 100%; border-radius: 20px; overflow: hidden; display: none; margin-top: 10px; border: 2px solid var(--accent) !important; }
     </style>
 </head>
 <body onload="app.checkRemember()">
 
-<div id="splash"><div class="loader"></div><h2 style="margin-top:20px; letter-spacing:4px; font-weight:200;">STUDIO PRO</h2></div>
-
-<div id="auth-selection" class="auth-container">
-    <h1>Hoş Geldiniz</h1>
-    <button class="btn" onclick="ui.showGate('admin')">👑 Yönetici Girişi</button>
-    <button class="btn" style="background:var(--card); color:white; border:1px solid var(--border);" onclick="ui.showGate('member')">👤 Üye Girişi</button>
-</div>
-
-<div id="gate-page" class="auth-container" style="display:none;">
-    <div class="card" style="max-width:350px;">
-        <h3 id="gate-title">Giriş</h3>
-        <div class="input-group">
-            <input type="password" id="gate-input" placeholder="Şifre veya Tel">
-            <span class="toggle-pass" onclick="ui.toggleVisibility()">GÖSTER</span>
+<div id="auth-page">
+    <h1 style="letter-spacing: -1px;">Studio Manager <span style="color:var(--accent);">Pro</span></h1>
+    <div class="card" style="max-width: 350px;">
+        <input type="password" id="loginKey" placeholder="Şifre veya Telefon No">
+        <div style="margin: 15px 0; font-size: 13px; text-align: left;">
+            <input type="checkbox" id="rememberMe" style="width:auto;"> Beni Hatırla
         </div>
-        <div style="margin-top:15px; font-size:13px; color:var(--muted); text-align:left;">
-            <input type="checkbox" id="rememberMe" style="width:auto; margin-top:0;"> Beni Hatırla
-        </div>
-        <button class="btn" onclick="app.processLogin()">Giriş Yap</button>
-        <button onclick="ui.back()" style="background:none; border:none; color:var(--muted); margin-top:15px;">Vazgeç</button>
+        <button class="btn" onclick="app.login()">Giriş Yap</button>
+        <p id="mode-text" style="font-size: 12px; color: var(--muted); margin-top: 15px;">Yönetici şifresi varsayılan: 1234</p>
     </div>
 </div>
 
 <div id="admin-panel" class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center;"><h2>Yönetim</h2><button onclick="app.logout()" class="badge">Çıkış</button></div>
-    <div class="card" style="text-align:center;">
-        <b>Stüdyo QR</b><br><div id="admin-qr" style="background:white; padding:10px; display:inline-block; margin:15px; border-radius:12px;"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Yönetici</h2>
+        <button onclick="app.logout()" class="badge" style="border:none; cursor:pointer;">Çıkış Yap</button>
     </div>
+
     <div class="card">
-        <h3>Yeni Üye Ekle</h3>
+        <h3>Yeni Üye & Paket Tanımla</h3>
         <input type="text" id="mName" placeholder="Ad Soyad">
-        <input type="tel" id="mPhone" placeholder="Telefon No">
-        <input type="number" id="mSess" placeholder="Seans Paketi">
-        <button class="btn" onclick="app.addMember()">Kaydet</button>
+        <input type="tel" id="mPhone" placeholder="Telefon">
+        <select id="mPack">
+            <option value="8">8 Seans (1 Ay Kullanım)</option>
+            <option value="12">12 Seans (2 Ay Kullanım)</option>
+            <option value="custom">Özel Seans</option>
+        </select>
+        <input type="number" id="mCustomSess" placeholder="Özel Seans Sayısı (Seçilirse)" style="display:none;">
+        <button class="btn" onclick="app.addMember()">Üyeyi Kaydet</button>
     </div>
+
+    <h3>Üye Listesi & Seans Ekleme</h3>
     <div id="admin-list"></div>
 </div>
 
 <div id="member-panel" class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="u-welcome">Merhaba</h2><button onclick="app.logout()" class="badge">Çıkış</button>
+    <div class="card" style="display:flex; justify-content:space-between; align-items:center; background:var(--accent); color:black;">
+        <h2 id="u-welcome" style="margin:0;">Merhaba!</h2>
+        <button onclick="app.logout()" style="background:black; color:white; border:none; padding:5px 10px; border-radius:8px; font-size:10px;">ÇIKIŞ</button>
     </div>
 
-    <div id="u-home" class="u-tab active">
+    <div id="tab-home" class="tab-content">
         <div class="card" style="text-align:center;">
-            <small>KALAN SEANS</small>
-            <h1 id="u-sess" style="font-size:60px; color:var(--accent); margin:10px 0;">0</h1>
+            <small style="color:var(--muted)">KALAN SEANS</small>
+            <h1 id="u-sess" style="font-size:70px; margin:10px 0; color:var(--accent);">0</h1>
+            <p id="u-expiry" style="font-size:12px; color:var(--danger);"></p>
             <div id="reader"></div>
-            <button class="btn" id="cam-start" onclick="app.startScanner()">📷 Kamerayı Aç</button>
+            <button class="btn" onclick="app.startScanner()">📷 Kamerayı Aç (Seans Düş)</button>
+            <button class="btn" style="background:#1c1c1e; color:white;" onclick="document.getElementById('qr-file').click()">🖼️ Galeriden QR Okut</button>
             <input type="file" id="qr-file" accept="image/*" style="display:none;" onchange="app.scanFromGallery(event)">
-            <button class="btn" style="background:var(--border); color:white;" onclick="document.getElementById('qr-file').click()">🖼️ Galeriden QR Okut</button>
+        </div>
+        <div class="card">
+            <b>Üyelik Bilgileri</b><br>
+            <small id="u-start-date">Başlangıç: --</small>
         </div>
     </div>
 
-    <div id="u-cal" class="u-tab" style="display:none;">
-        <h3>Ders Programı</h3>
-        <div class="card"><b>07:00</b> Pilates (Reformer)</div>
-        <div class="card"><b>12:00</b> Yoga Flow</div>
-        <div class="card"><b>19:00</b> Functional Training</div>
+    <div id="tab-cal" class="tab-content" style="display:none;">
+        <h3>Ders Programı (07:00 - 20:00)</h3>
+        <div class="card">🧘 <b>08:00</b> - Yoga Flow</div>
+        <div class="card">🤸 <b>12:00</b> - Pilates Reformer</div>
+        <div class="card">💃 <b>19:00</b> - Zumba / Dans</div>
     </div>
 
-    <div id="u-diet" class="u-tab" style="display:none;">
-        <h3>Öğün Listem</h3>
-        <div class="card">🍳 <b>Kahvaltı:</b> 2 Yumurta, Lor, Mevsim Yeşilliği</div>
-        <div class="card">🥗 <b>Öğle:</b> 150g Izgara Tavuk, Bol Salata</div>
-        <div class="card">🍎 <b>Ara:</b> 1 Yeşil Elma, 2 Tam Ceviz</div>
-        <div class="card">🍲 <b>Akşam:</b> Sebze Yemeği, 1 Kase Yoğurt</div>
+    <div id="tab-diet" class="tab-content" style="display:none;">
+        <h3>Beslenme Programı</h3>
+        <div class="card">🍳 <b>Kahvaltı:</b> 2 Yumurta, Lor Peyniri, Zeytin</div>
+        <div class="card">🥗 <b>Öğle:</b> 150g Izgara Tavuk, Mevsim Salata</div>
+        <div class="card">🍎 <b>Ara:</b> 1 Elma, 2 Ceviz</div>
+        <div class="card">🍲 <b>Akşam:</b> Sebze Yemeği, Yoğurt</div>
     </div>
 </div>
 
-<nav class="nav" id="main-nav">
-    <div class="nav-item active" onclick="ui.tab('u-home', this)">🏠<br>Ana Sayfa</div>
-    <div class="nav-item" onclick="ui.tab('u-cal', this)">📅<br>Takvim</div>
-    <div class="nav-item" onclick="ui.tab('u-diet', this)">🍎<br>Diyet</div>
+<nav class="nav" id="member-nav">
+    <div class="nav-item active" onclick="app.switchTab('tab-home', this)">🏠<br>Panel</div>
+    <div class="nav-item" onclick="app.switchTab('tab-cal', this)">📅<br>Takvim</div>
+    <div class="nav-item" onclick="app.switchTab('tab-diet', this)">🍎<br>Diyet</div>
 </nav>
 
 <script>
-const ui = {
-    showGate(mode) {
-        this.mode = mode;
-        document.getElementById('auth-selection').style.display = 'none';
-        document.getElementById('gate-page').style.display = 'flex';
-        document.getElementById('gate-title').innerText = mode === 'admin' ? 'Yönetici' : 'Üye';
-    },
-    back() { document.getElementById('gate-page').style.display = 'none'; document.getElementById('auth-selection').style.display = 'flex'; },
-    toggleVisibility() {
-        const inp = document.getElementById('gate-input');
-        inp.type = inp.type === 'password' ? 'text' : 'password';
-    },
-    tab(id, el) {
-        document.querySelectorAll('.u-tab').forEach(t => t.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    }
-};
-
 const app = {
-    db: JSON.parse(localStorage.getItem('studio_v13')) || { members: [], adminPass: "1234" },
+    db: JSON.parse(localStorage.getItem('studio_v14')) || { members: [], adminPass: "1234" },
     currentUser: null,
 
-    init() {
-        setTimeout(() => { document.getElementById('splash').style.opacity = '0'; 
-        setTimeout(() => document.getElementById('splash').style.display='none', 800); }, 2000);
-        this.genAdminQR();
-    },
-
-    checkRemember() {
-        this.init();
-        const saved = localStorage.getItem('sm_remember');
-        if(saved) {
-            const data = JSON.parse(saved);
-            document.getElementById('gate-input').value = data.key;
-            ui.mode = data.mode;
-            this.processLogin();
-        }
-    },
-
-    processLogin() {
-        const key = document.getElementById('gate-input').value;
+    login() {
+        const key = document.getElementById('loginKey').value;
         const remember = document.getElementById('rememberMe').checked;
 
-        if(ui.mode === 'admin') {
-            if(key === this.db.adminPass) {
-                if(remember) localStorage.setItem('sm_remember', JSON.stringify({key, mode:'admin'}));
-                this.showPanel('admin-panel');
-                this.renderAdmin();
-            } else alert("Şifre Yanlış!");
-        } else {
-            const m = this.db.members.find(x => x.phone === key);
-            if(m) {
-                if(remember) localStorage.setItem('sm_remember', JSON.stringify({key, mode:'member'}));
-                this.currentUser = m;
-                this.showPanel('member-panel');
-                document.getElementById('main-nav').style.display = 'flex';
-                this.renderUser();
-            } else alert("Telefon bulunamadı!");
+        // Yönetici Kontrol
+        if(key === this.db.adminPass) {
+            if(remember) localStorage.setItem('sm_auth', JSON.stringify({key, type:'admin'}));
+            this.showPanel('admin-panel');
+            this.renderAdmin();
+            return;
         }
+
+        // Üye Kontrol
+        const m = this.db.members.find(u => u.phone === key);
+        if(m) {
+            if(remember) localStorage.setItem('sm_auth', JSON.stringify({key, type:'member'}));
+            this.currentUser = m;
+            this.showPanel('member-panel');
+            document.getElementById('member-nav').style.display = 'flex';
+            this.renderUser();
+        } else alert("Hatalı giriş!");
     },
 
     showPanel(id) {
-        document.getElementById('auth-selection').style.display='none';
-        document.getElementById('gate-page').style.display='none';
-        document.getElementById(id).style.display='block';
+        document.getElementById('auth-page').style.display = 'none';
+        document.getElementById(id).style.display = 'block';
     },
 
+    // --- YÖNETİCİ İŞLEMLERİ ---
     addMember() {
         const name = document.getElementById('mName').value;
         const phone = document.getElementById('mPhone').value;
-        const sess = document.getElementById('mSess').value;
+        const pack = document.getElementById('mPack').value;
+        
+        if(!name || !phone) return alert("Eksik bilgi!");
 
-        if(this.db.members.some(m => m.name.toLowerCase() === name.toLowerCase())) {
-            if(!confirm("Bu isimde bir üye zaten var! Yine de eklemek istiyor musunuz?")) return;
+        // Mükerrer Kontrol
+        if(this.db.members.some(m => m.name === name)) {
+            if(!confirm("Aynı isimde üye var, devam?")) return;
         }
 
-        this.db.members.push({ id: Date.now(), name, phone, sessions: parseInt(sess)||0 });
+        let sessions = pack === 'custom' ? parseInt(document.getElementById('mCustomSess').value) : parseInt(pack);
+        let duration = pack === '8' ? 1 : (pack === '12' ? 2 : 1); // Ay bazında
+
+        const start = new Date();
+        const expiry = new Date();
+        expiry.setMonth(start.getMonth() + duration);
+
+        this.db.members.push({
+            id: Date.now(),
+            name, phone, sessions,
+            startDate: start.toLocaleDateString('tr-TR'),
+            expiryDate: expiry.toLocaleDateString('tr-TR'),
+            expiryRaw: expiry.getTime()
+        });
+
         this.save(); this.renderAdmin();
-        document.getElementById('mName').value = ""; document.getElementById('mPhone').value = "";
+        alert("Üye başarıyla eklendi!");
     },
 
     renderAdmin() {
         const list = document.getElementById('admin-list');
-        list.innerHTML = "<h3>Üye Listesi</h3>";
+        list.innerHTML = "";
         this.db.members.forEach(m => {
-            list.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b>${m.name}</b><br><small>${m.phone} | ${m.sessions} Seans</small></div>
-                <button onclick="app.deleteMember(${m.id})" style="background:none; border:none; color:var(--danger);">SİL</button>
-            </div>`;
+            list.innerHTML += `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>${m.name}</b>
+                        <button onclick="app.deleteMember(${m.id})" style="color:var(--danger); background:none; border:none;">SİL</button>
+                    </div>
+                    <small>Tel: ${m.phone} | Bitiş: ${m.expiryDate}</small><br>
+                    <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+                        <span class="badge">Seans: ${m.sessions}</span>
+                        <button onclick="app.addExtraSession(${m.id})" style="padding:5px 10px; border-radius:5px; border:none; background:var(--accent); font-size:10px;">+ Seans Ekle</button>
+                    </div>
+                </div>`;
         });
     },
 
+    addExtraSession(id) {
+        const m = this.db.members.find(x => x.id === id);
+        m.sessions++;
+        this.save(); this.renderAdmin();
+    },
+
     deleteMember(id) {
-        if(confirm("Üye silinecek?")) { this.db.members = this.db.members.filter(m => m.id !== id); this.save(); this.renderAdmin(); }
+        if(confirm("Silmek istediğinize emin misiniz?")) {
+            this.db.members = this.db.members.filter(m => m.id !== id);
+            this.save(); this.renderAdmin();
+        }
     },
 
-    genAdminQR() {
-        const qrEl = document.getElementById("admin-qr");
-        if(qrEl) { qrEl.innerHTML = ""; new QRCode(qrEl, { text: "STUDIO-AUTH-2024", width: 150, height: 150 }); }
-    },
-
+    // --- ÜYE İŞLEMLERİ ---
     renderUser() {
         document.getElementById('u-welcome').innerText = "Merhaba, " + this.currentUser.name;
         document.getElementById('u-sess').innerText = this.currentUser.sessions;
+        document.getElementById('u-start-date').innerText = "Başlangıç: " + this.currentUser.startDate;
+        document.getElementById('u-expiry').innerText = "Paket Bitiş Tarihi: " + this.currentUser.expiryDate;
+        
+        // Süre Kontrol
+        if(Date.now() > this.currentUser.expiryRaw) {
+            document.getElementById('u-expiry').innerHTML = "⚠️ PAKET SÜRESİ DOLMUŞ!";
+        }
+    },
+
+    switchTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+        document.getElementById(tabId).style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
     },
 
     startScanner() {
         document.getElementById('reader').style.display = 'block';
         const sc = new Html5Qrcode("reader");
         sc.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => {
-            this.validateQR(text); sc.stop(); document.getElementById('reader').style.display = 'none';
+            this.validateQR(text); sc.stop(); document.getElementById('reader').style.display='none';
         });
     },
 
     scanFromGallery(e) {
         const file = e.target.files[0];
         if(!file) return;
-        const sc = new Html5Qrcode("reader"); // Okuyucu motoru başlat
-        sc.scanFile(file, true)
-            .then(text => { this.validateQR(text); })
-            .catch(err => alert("Hata: Görselde geçerli bir QR kod bulunamadı!"));
+        const sc = new Html5Qrcode("reader");
+        sc.scanFile(file, true).then(text => this.validateQR(text)).catch(() => alert("QR Bulunamadı!"));
     },
 
     validateQR(text) {
-        if(text === "STUDIO-AUTH-2024") {
+        // Sabit Studio QR'ı (Yöneticide duran)
+        if(text.includes("STUDIO")) {
             if(this.currentUser.sessions > 0) {
                 this.currentUser.sessions--;
                 this.save(); this.renderUser();
-                alert("İşlem Başarılı! 1 Seans Düşüldü.");
-            } else alert("Yetersiz Seans!");
-        } else alert("Geçersiz QR Kod!");
+                alert("Başarılı! Seans düşüldü.");
+            } else alert("Seansınız kalmadı!");
+        }
     },
 
-    logout() { localStorage.removeItem('sm_remember'); location.reload(); },
-    save() { localStorage.setItem('studio_v13', JSON.stringify(this.db)); }
+    checkRemember() {
+        const auth = localStorage.getItem('sm_auth');
+        if(auth) {
+            const data = JSON.parse(auth);
+            document.getElementById('loginKey').value = data.key;
+            this.login();
+        }
+    },
+
+    logout() { localStorage.removeItem('sm_auth'); location.reload(); },
+    save() { localStorage.setItem('studio_v14', JSON.stringify(this.db)); }
 };
+
+// Özel seans alanını göster/gizle
+document.getElementById('mPack').addEventListener('change', function() {
+    document.getElementById('mCustomSess').style.display = this.value === 'custom' ? 'block' : 'none';
+});
 </script>
 </body>
 </html>
