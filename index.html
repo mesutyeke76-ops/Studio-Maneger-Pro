@@ -2,49 +2,165 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Studio Pro">
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/144/diamond.png">
+    
     <title>Studio Manager Pro | Enterprise</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        :root { --p: #6366f1; --s: #10b981; --w: #f59e0b; --d: #0f172a; --bg: #f1f5f9; --c: #ffffff; --t: #1e293b; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--t); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
-        
-        /* iOS Header */
-        header { background: var(--d); color: white; padding: 50px 20px 20px; text-align: center; border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
+        :root {
+            --p: #6366f1; /* Primery Purple */
+            --s: #10b981; /* Success Green */
+            --d: #0f172a; /* Dark Navy */
+            --bg: #f8fafc;
+            --c: #ffffff;
+            --t: #1e293b;
+            --danger: #ef4444;
+        }
 
-        .container { padding: 15px; max-width: 600px; margin: auto; }
-        .card { background: var(--c); padding: 18px; border-radius: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #e2e8f0; }
-        
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-box { background: var(--c); padding: 15px; border-radius: 15px; text-align: center; border-left: 5px solid var(--p); }
-        .stat-box h4 { margin: 0; font-size: 0.8rem; color: #64748b; }
-        .stat-box p { margin: 5px 0 0; font-size: 1.2rem; font-weight: bold; color: var(--d); }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--t);
+            padding-bottom: 100px;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        /* Form Elements */
-        input, select { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 16px; outline: none; }
-        .btn { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
-        .btn-p { background: var(--p); color: white; }
-        .btn-s { background: var(--s); color: white; }
-        
-        /* Tab Bar */
-        .tab-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0 30px; border-top: 1px solid #e2e8f0; }
-        .tab-item { background: none; border: none; color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .tab-item.active { color: var(--p); }
-        .tab-icon { font-size: 20px; }
+        /* iOS Notch Spacing */
+        header {
+            background: var(--d);
+            color: white;
+            padding: 60px 20px 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
 
-        .page { display: none; animation: slideUp 0.3s ease-out; }
-        .active { display: block; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .badge-p { background: #e0e7ff; color: var(--p); }
+        header h1 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+
+        .container { padding: 20px; max-width: 600px; margin: auto; }
+
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card {
+            background: var(--c);
+            padding: 20px;
+            border-radius: 20px;
+            border-left: 6px solid var(--p);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card h4 { margin: 0; font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+        .stat-card p { margin: 8px 0 0; font-size: 1.5rem; font-weight: 700; color: var(--d); }
+
+        /* Main Cards */
+        .card {
+            background: var(--c);
+            padding: 20px;
+            border-radius: 22px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+            border: 1px solid #f1f5f9;
+        }
+
+        h3 { margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+
+        /* UI Elements */
+        input, select {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            box-sizing: border-box;
+            font-size: 16px; /* iOS zoom engelleme */
+            outline: none;
+            background: #fdfdfd;
+        }
+
+        .btn {
+            padding: 16px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-p { background: var(--p); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4); }
+        .btn-s { background: var(--s); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
+
+        /* Lists */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .list-item:last-child { border: none; }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #e0e7ff;
+            color: var(--p);
+        }
+
+        /* Bottom Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0 35px;
+            border-top: 1px solid #e2e8f0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: 0.3s;
+        }
+
+        .nav-item.active { color: var(--p); }
+        .nav-icon { font-size: 22px; }
+
+        /* Pages */
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .active-page { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
@@ -54,172 +170,191 @@
     </header>
 
     <div class="container">
-        <div id="dash" class="page active">
+        <div id="dash" class="page active-page">
             <div class="stats-grid">
-                <div class="stat-box"><h4>Aktif Üye</h4><p id="c-m">0</p></div>
-                <div class="stat-box" style="border-left-color: var(--s);"><h4>Toplam Ciro</h4><p id="c-r">₺0</p></div>
+                <div class="stat-card"><h4>Üye Sayısı</h4><p id="stat-m">0</p></div>
+                <div class="stat-card" style="border-left-color: var(--s);"><h4>Toplam Ciro</h4><p id="stat-r">₺0</p></div>
             </div>
+            
             <div class="card">
-                <h3 style="margin-top:0">📈 Haftalık Kayıt Grafiği</h3>
-                <canvas id="mainChart" height="200"></canvas>
+                <h3>📈 Haftalık Analiz</h3>
+                <canvas id="chart"></canvas>
             </div>
+
             <div class="card">
-                <h3>🔔 Yaklaşan Randevular</h3>
-                <div id="quick-events"></div>
+                <h3>📅 Bugünün Randevuları</h3>
+                <div id="today-list">
+                    <p style="color:#94a3b8; font-size: 14px;">Henüz randevu yok...</p>
+                </div>
             </div>
         </div>
 
         <div id="mems" class="page">
-            <h3>Üye Yönetim Paneli</h3>
+            <h3>👥 Üye Kayıt & Liste</h3>
             <div class="card">
                 <input type="text" id="mName" placeholder="Ad Soyad">
-                <input type="tel" id="mPhone" placeholder="Telefon No">
                 <select id="mPack">
-                    <option value="Aylık Standart">Aylık Standart</option>
+                    <option value="Aylık Paket">Aylık Paket</option>
                     <option value="3 Aylık Paket">3 Aylık Paket</option>
-                    <option value="Yıllık VIP">Yıllık VIP</option>
+                    <option value="VIP Üyelik">VIP Üyelik</option>
                     <option value="Özel Ders (PT)">Özel Ders (PT)</option>
                 </select>
-                <button class="btn btn-p" onclick="addMember()">Üyeyi Kaydet</button>
+                <button class="btn btn-p" onclick="addMember()">✨ Üyeyi Kaydet</button>
             </div>
-            <div id="memberList"></div>
+            <div id="memberList" class="card" style="padding:0"></div>
         </div>
 
         <div id="cal" class="page">
-            <h3>Randevu Kaydı</h3>
+            <h3>📅 Randevu Planla</h3>
             <div class="card">
-                <input type="text" id="evName" placeholder="Üye Adı / Ders">
-                <input type="datetime-local" id="evDate">
-                <button class="btn btn-p" onclick="addEvent()">Randevu Ekle</button>
+                <input type="text" id="eName" placeholder="Üye veya Ders Adı">
+                <input type="datetime-local" id="eDate">
+                <button class="btn btn-p" onclick="addEvent()">➕ Randevu Oluştur</button>
             </div>
-            <div id="eventList"></div>
+            <div id="eventList" class="card" style="padding:0"></div>
         </div>
 
         <div id="fin" class="page">
-            <h3>Stok & Finans</h3>
-            <div class="card" style="background: var(--d); color: white;">
-                <h4>Net Kasa Bakiyesi</h4>
-                <h2 id="total-money">₺0.00</h2>
+            <h3>💰 Kasa & Stok Yönetimi</h3>
+            <div class="card" style="background: var(--d); color: white; text-align: center;">
+                <p style="margin:0; opacity: 0.7; font-size: 13px;">Net Bakiye</p>
+                <h2 id="total-cash" style="font-size: 2.2rem; margin: 10px 0;">₺0</h2>
             </div>
+            
             <div class="card">
-                <h4>Ürün Ekle</h4>
+                <h4>Ürün/Hizmet Tanımla</h4>
                 <input type="text" id="pName" placeholder="Ürün Adı">
-                <input type="number" id="pPrice" placeholder="Satış Fiyatı (₺)">
-                <button class="btn btn-s" onclick="addProduct()">Stoka Ekle</button>
+                <input type="number" id="pPrice" placeholder="Fiyat (₺)">
+                <button class="btn btn-s" onclick="addProduct()">📦 Stoka Ekle</button>
             </div>
-            <div id="stockList"></div>
+            <div id="productList" class="card" style="padding:0"></div>
         </div>
     </div>
 
-    <nav class="tab-bar">
-        <button class="tab-item active" id="b-dash" onclick="showPage('dash')">
-            <span class="tab-icon">📊</span><span>Panel</span>
+    <nav class="nav-bar">
+        <button class="nav-item active" id="n-dash" onclick="openPage('dash')">
+            <span class="nav-icon">📊</span>Panel
         </button>
-        <button class="tab-item" id="b-mems" onclick="showPage('mems')">
-            <span class="tab-icon">👥</span><span>Üyeler</span>
+        <button class="nav-item" id="n-mems" onclick="openPage('mems')">
+            <span class="nav-icon">👥</span>Üyeler
         </button>
-        <button class="tab-item" id="b-cal" onclick="showPage('cal')">
-            <span class="tab-icon">📅</span><span>Randevu</span>
+        <button class="nav-item" id="n-cal" onclick="openPage('cal')">
+            <span class="nav-icon">📅</span>Randevu
         </button>
-        <button class="tab-item" id="b-fin" onclick="showPage('fin')">
-            <span class="tab-icon">💰</span><span>Finans</span>
+        <button class="nav-item" id="n-fin" onclick="openPage('fin')">
+            <span class="nav-icon">💰</span>Kasa
         </button>
     </nav>
 
     <script>
-        // Veri Modeli
-        let data = JSON.parse(localStorage.getItem('studio_pro_data')) || {
-            mems: [], evs: [], prods: [], revenue: 0
+        // Veri Yapısı (Tarayıcı hafızasında saklanır)
+        let studioDB = JSON.parse(localStorage.getItem('studio_enterprise_db')) || {
+            mems: [], evs: [], prods: [], cash: 0
         };
 
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('b-'+id).classList.add('active');
+        function openPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active-page');
+            document.getElementById('n-'+id).classList.add('active');
         }
 
-        // Üye İşlemleri
+        // --- Üye Fonksiyonları ---
         function addMember() {
-            let name = document.getElementById('mName').value;
-            let pack = document.getElementById('mPack').value;
-            if(!name) return;
-            data.mems.push({name, pack, date: new Date().toLocaleDateString('tr-TR')});
-            save();
+            let n = document.getElementById('mName').value;
+            let p = document.getElementById('mPack').value;
+            if(!n) return alert('İsim giriniz!');
+            studioDB.mems.push({n, p, date: new Date().toLocaleDateString('tr-TR')});
+            saveDB();
             document.getElementById('mName').value = '';
         }
 
-        // Randevu İşlemleri
+        // --- Randevu Fonksiyonları ---
         function addEvent() {
-            let n = document.getElementById('evName').value;
-            let d = document.getElementById('evDate').value;
-            if(!n || !d) return;
-            data.evs.push({n, d: new Date(d).toLocaleString('tr-TR')});
-            save();
+            let n = document.getElementById('eName').value;
+            let d = document.getElementById('eDate').value;
+            if(!n || !d) return alert('Eksik bilgi!');
+            studioDB.evs.push({n, d: new Date(d).toLocaleString('tr-TR')});
+            saveDB();
+            document.getElementById('eName').value = '';
         }
 
-        // Stok İşlemleri
+        // --- Stok & Satış ---
         function addProduct() {
             let n = document.getElementById('pName').value;
-            let p = document.getElementById('pPrice').value;
-            if(!n || !p) return;
-            data.prods.push({n, p: parseFloat(p)});
-            save();
+            let pr = document.getElementById('pPrice').value;
+            if(!n || !pr) return alert('Eksik bilgi!');
+            studioDB.prods.push({n, pr: parseFloat(pr)});
+            saveDB();
+            document.getElementById('pName').value = '';
+            document.getElementById('pPrice').value = '';
         }
 
-        function sellProduct(i) {
-            data.revenue += data.prods[i].p;
-            save();
+        function sell(i) {
+            studioDB.cash += studioDB.prods[i].pr;
+            saveDB();
+            alert('Satış Başarılı!');
         }
 
-        function save() {
-            localStorage.setItem('studio_pro_data', JSON.stringify(data));
-            render();
+        function saveDB() {
+            localStorage.setItem('studio_enterprise_db', JSON.stringify(studioDB));
+            updateUI();
         }
 
-        function render() {
-            document.getElementById('c-m').innerText = data.mems.length;
-            document.getElementById('c-r').innerText = '₺' + data.revenue.toLocaleString();
-            document.getElementById('total-money').innerText = '₺' + data.revenue.toLocaleString();
+        function updateUI() {
+            // Dashboard İstatistikleri
+            document.getElementById('stat-m').innerText = studioDB.mems.length;
+            document.getElementById('stat-r').innerText = '₺' + studioDB.cash.toLocaleString();
+            document.getElementById('total-cash').innerText = '₺' + studioDB.cash.toLocaleString();
 
-            // Üye Listesi
-            document.getElementById('memberList').innerHTML = data.mems.map(m => `
-                <div class="card list-item">
-                    <div><b>${m.name}</b><br><small>${m.date}</small></div>
-                    <span class="badge badge-p">${m.pack}</span>
+            // Üye Listesi Render
+            document.getElementById('memberList').innerHTML = studioDB.mems.map(m => `
+                <div class="list-item">
+                    <div><b>${m.n}</b><br><small style="color:#64748b">${m.date}</small></div>
+                    <span class="badge">${m.p}</span>
                 </div>
             `).reverse().join('');
 
-            // Randevu Listesi
-            document.getElementById('eventList').innerHTML = data.evs.map(e => `
-                <div class="card list-item">
-                    <b>${e.n}</b><span>${e.d}</span>
+            // Randevu Listesi Render
+            document.getElementById('eventList').innerHTML = studioDB.evs.map(e => `
+                <div class="list-item">
+                    <div><b>${e.n}</b></div>
+                    <div style="font-size: 13px; color: var(--p); font-weight: 600;">${e.d}</div>
                 </div>
             `).reverse().join('');
 
-            // Stok Listesi
-            document.getElementById('stockList').innerHTML = data.prods.map((p, i) => `
-                <div class="card list-item">
-                    <b>${p.n} (₺${p.p})</b>
-                    <button class="btn-s" style="padding:6px 12px; border-radius:8px; border:none;" onclick="sellProduct(${i})">Sat</button>
+            // Stok Listesi Render
+            document.getElementById('productList').innerHTML = studioDB.prods.map((p, i) => `
+                <div class="list-item">
+                    <b>${p.n} (₺${p.pr})</b>
+                    <button class="btn-s" style="padding:8px 15px; width:auto; font-size:12px;" onclick="sell(${i})">SATIŞ YAP</button>
                 </div>
             `).join('');
         }
 
-        // Grafik Başlatma
-        const ctx = document.getElementById('mainChart').getContext('2d');
+        // --- Grafik Kurulumu ---
+        const ctx = document.getElementById('chart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
-                datasets: [{ label: 'Kayıtlar', data: [2, 8, 4, 12, 9, 15, 22], borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.1)' }]
+                datasets: [{
+                    label: 'Kayıt Trendi',
+                    data: [2, 5, 4, 10, 8, 14, 18],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
             },
-            options: { plugins: { legend: { display: false } }, scales: { y: { display: false } } }
+            options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
         });
 
-        render();
+        // Sayfa Yüklendiğinde
+        updateUI();
+
     </script>
 </body>
 </html>
 
-            
+
