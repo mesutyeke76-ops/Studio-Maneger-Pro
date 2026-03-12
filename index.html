@@ -3,95 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Diamond Pro | Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Diamond Pro | Studio Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg: #000000; --card: #1c1c1e; --accent: #d2fe00; --text: #ffffff; --muted: #8e8e93; --border: #2c2c2e; }
+        :root { --bg: #000000; --card: #1c1c1e; --accent: #d2fe00; --text: #ffffff; --muted: #8e8e93; --border: #2c2c2e; --red: #ff3b30; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 90px; }
+        body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 100px; }
         
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        h2, h3 { font-weight: 800; margin-top: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         
-        input, select, textarea { width: 100%; padding: 14px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: #262629; color: white; font-size: 14px; }
-        .btn { width: 100%; padding: 16px; margin-top: 10px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .btn:active { transform: scale(0.96); }
+        /* Form Elemanları */
+        input, select { width: 100%; padding: 15px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: #262629; color: white; font-size: 15px; }
+        .btn { width: 100%; padding: 16px; margin-top: 10px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; font-size: 16px; }
+        .btn-danger { background: var(--red); color: white; padding: 8px 15px; border-radius: 10px; font-size: 12px; }
+        .btn-action { background: #007aff; color: white; padding: 8px 15px; border-radius: 10px; font-size: 12px; }
 
-        /* Navigasyon */
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-btn { background: none; border: none; color: var(--muted); font-size: 10px; font-weight: 600; cursor: pointer; }
+        /* Navigation */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 0 35px; border-top: 1px solid var(--border); z-index: 9999; }
+        .nav-btn { background: none; border: none; color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; width: 20%; }
         .nav-btn.active { color: var(--accent); }
 
-        /* Takvim Grid */
-        .cal-scroll { overflow-x: auto; border-radius: 15px; border: 1px solid var(--border); margin-top: 10px; }
-        .cal-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); background: var(--border); gap: 1px; min-width: 600px; }
-        .cal-cell { background: var(--bg); height: 45px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
-        .cal-header { background: var(--card); color: var(--accent); font-weight: 800; height: 35px; }
-        .slot-busy { background: var(--accent) !important; color: black; font-weight: 800; }
+        /* Takvim */
+        .cal-container { overflow-x: auto; border-radius: 15px; border: 1px solid var(--border); }
+        .cal-grid { display: grid; grid-template-columns: 70px repeat(7, 1fr); background: var(--border); gap: 1px; min-width: 700px; }
+        .cal-cell { background: var(--bg); height: 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); }
+        .cal-header { background: var(--card); color: var(--accent); font-weight: 800; height: 40px; }
+        .busy { background: var(--accent) !important; color: black !important; font-weight: 800; }
 
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; }
 
-        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #262629; border-radius: 15px; margin-bottom: 10px; }
+        .member-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #262629; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .stats { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-card { flex: 1; background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
-<div id="page-home" class="page container active">
-    <h3>Diamond Pro</h3>
+<div id="page-members" class="page container active">
+    <h2 style="margin-bottom:5px;">Üye Yönetimi</h2>
+    <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">İşletmenizdeki aktif üye ve seans takibi.</p>
+    
     <div class="card">
-        <h4 style="margin:0">Yeni Üye Kaydı</h4>
-        <input type="text" id="mName" placeholder="Ad Soyad">
-        <button class="btn" onclick="app.addMember()">Kaydet</button>
+        <h4 style="margin:0">Yeni Üye Ekle</h4>
+        <input type="text" id="mName" placeholder="Adı Soyadı">
+        <button class="btn" onclick="app.addMember()">Sisteme Tanımla</button>
     </div>
-    <h3>Aktif Üyeler</h3>
-    <div id="memberList"></div>
+
+    <div id="memberList">
+        </div>
 </div>
 
 <div id="page-finance" class="page container">
-    <h3>Finans & Satış</h3>
-    <div class="card">
-        <small style="color:var(--muted)">Toplam Ciro</small>
-        <h2 style="color:var(--accent); font-size:36px; margin:5px 0;">₺<span id="ciroVal">0</span></h2>
-        <canvas id="ciroChart" style="max-height:150px;"></canvas>
+    <h2>Finansal Takip</h2>
+    <div class="stats">
+        <div class="stat-card">
+            <small style="color:var(--muted)">Toplam Ciro</small>
+            <div style="font-size:20px; font-weight:800; color:var(--accent); margin-top:5px;">₺<span id="totalCiro">0</span></div>
+        </div>
+        <div class="stat-card">
+            <small style="color:var(--muted)">Satış Adedi</small>
+            <div style="font-size:20px; font-weight:800; margin-top:5px;" id="salesCount">0</div>
+        </div>
     </div>
+
     <div class="card">
-        <h4>Paket Satışı</h4>
-        <select id="payMemberSelect"></select>
-        <select id="payPackSelect">
-            <option value="4|4000">4 Seans - 4.000₺</option>
-            <option value="8|7500">8 Seans - 7.500₺</option>
-            <option value="12|10500">12 Seans - 10.500₺</option>
-            <option value="16|13000">16 Seans - 13.000₺</option>
+        <canvas id="financeChart" style="max-height:180px;"></canvas>
+    </div>
+
+    <div class="card">
+        <h4>Paket Satışı Tanımla</h4>
+        <select id="saleMemberSelect"></select>
+        <select id="packSelect">
+            <option value="4|4000">4 Seans Paket (₺4.000)</option>
+            <option value="8|7500">8 Seans Paket (₺7.500)</option>
+            <option value="12|10500">12 Seans Paket (₺10.500)</option>
+            <option value="16|13000">16 Seans Paket (₺13.000)</option>
         </select>
-        <button class="btn" onclick="app.processSale()">Satışı Tamamla</button>
+        <button class="btn" onclick="app.processSale()">Ödemeyi Al ve Seans Yükle</button>
     </div>
 </div>
 
 <div id="page-calendar" class="page container">
-    <h3>Haftalık Program</h3>
-    <div class="cal-scroll">
+    <h2>Ders Programı</h2>
+    <p style="color:var(--muted); font-size:12px;">Hücrelere dokunarak doluluk durumunu güncelleyin.</p>
+    <div class="cal-container">
         <div class="cal-grid" id="calGrid"></div>
     </div>
 </div>
 
 <div id="page-diet" class="page container">
-    <h3>Beslenme Planları</h3>
+    <h2>Diyet & Beslenme</h2>
     <div class="card">
-        <select id="dietPlanSelect" onchange="app.updateDietInfo()">
-            <option value="1200">1200 Kalori (Hızlı Yağ Yakımı)</option>
-            <option value="1500">1500 Kalori (Dengeli)</option>
-            <option value="1800" selected>1800 Kalori (Kas Koruma)</option>
+        <h4>Hazır Şablon Atama</h4>
+        <select id="dietSelect" onchange="app.updateDiet()">
+            <option value="">Liste Seçiniz...</option>
+            <option value="1200">1200 Kalori Planı</option>
+            <option value="1500">1500 Kalori Planı</option>
+            <option value="1800">1800 Kalori Planı</option>
+            <option value="2200">2200 Kalori Planı</option>
         </select>
-        <div id="dietDetail" style="margin-top:20px; color:var(--accent); white-space:pre-line; line-height:1.6;"></div>
+        <div id="dietText" style="margin-top:20px; padding:15px; background:#262629; border-radius:12px; color:var(--accent); font-size:14px; white-space:pre-line;">
+            Lütfen yukarıdan bir plan seçin.
+        </div>
     </div>
 </div>
 
 <nav class="nav">
-    <button class="nav-btn active" onclick="app.showPage('page-home', this)">👥<br>Üyeler</button>
+    <button class="nav-btn active" onclick="app.showPage('page-members', this)">👥<br>Üyeler</button>
     <button class="nav-btn" onclick="app.showPage('page-finance', this)">💰<br>Finans</button>
     <button class="nav-btn" onclick="app.showPage('page-calendar', this)">📅<br>Takvim</button>
     <button class="nav-btn" onclick="app.showPage('page-diet', this)">🍎<br>Diyet</button>
@@ -99,17 +120,17 @@
 
 <script>
 const app = {
-    // Verileri tarayıcı hafızasına (LocalStorage) kaydeder
-    db: JSON.parse(localStorage.getItem('studio_pro_data')) || {
+    // Tüm veriler tarayıcıya (localStorage) kayıt edilir.
+    db: JSON.parse(localStorage.getItem('diamond_enterprise_db')) || {
         members: [],
         ciro: 0,
+        salesCount: 0,
         busySlots: []
     },
 
     init() {
         this.renderMembers();
         this.renderCalendar();
-        this.updateDietInfo();
     },
 
     showPage(id, btn) {
@@ -120,86 +141,100 @@ const app = {
         if(id === 'page-finance') this.renderFinance();
     },
 
+    // ÜYE FONKSİYONLARI
     addMember() {
-        const name = document.getElementById('mName').value;
-        if(!name) return;
-        this.db.members.push({ id: Date.now(), name, sessions: 0 });
+        const name = document.getElementById('mName').value.trim();
+        if(!name) return alert("Lütfen isim girin.");
+        this.db.members.push({ id: Date.now(), name: name, sessions: 0 });
         this.save();
         this.renderMembers();
         document.getElementById('mName').value = '';
     },
 
-    renderMembers() {
-        const list = document.getElementById('memberList');
-        const select = document.getElementById('payMemberSelect');
-        list.innerHTML = '';
-        select.innerHTML = '<option value="">Üye Seç...</option>';
-
-        this.db.members.forEach(m => {
-            list.innerHTML += `
-                <div class="member-item">
-                    <div><b>${m.name}</b><br><small style="color:var(--accent)">${m.sessions} Seans Kaldı</small></div>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="app.adjustSession(${m.id}, -1)" style="background:#007aff; border:none; color:white; border-radius:8px; padding:5px 10px;">Düş</button>
-                        <button onclick="app.deleteMember(${m.id})" style="background:#ff3b30; border:none; color:white; border-radius:8px; padding:5px 10px;">Sil</button>
-                    </div>
-                </div>`;
-            select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
-        });
-    },
-
-    adjustSession(id, val) {
-        const m = this.db.members.find(m => m.id === id);
-        if(m && (m.sessions + val) >= 0) {
-            m.sessions += val;
-            this.save();
-            this.renderMembers();
-        }
-    },
-
     deleteMember(id) {
+        if(!confirm("Bu üyeyi ve tüm kayıtlarını silmek istediğinize emin misiniz?")) return;
         this.db.members = this.db.members.filter(m => m.id !== id);
         this.save();
         this.renderMembers();
     },
 
-    processSale() {
-        const mId = document.getElementById('payMemberSelect').value;
-        const [count, price] = document.getElementById('payPackSelect').value.split('|').map(Number);
-        if(!mId) return alert("Önce üye seçin!");
-
-        const m = this.db.members.find(m => m.id == mId);
-        m.sessions += count;
-        this.db.ciro += price;
-        this.save();
-        this.renderMembers();
-        this.renderFinance();
-        alert("Satış Kaydedildi!");
+    adjustSession(id, amount) {
+        const m = this.db.members.find(m => m.id === id);
+        if(m && (m.sessions + amount) >= 0) {
+            m.sessions += amount;
+            this.save();
+            this.renderMembers();
+        }
     },
 
-    renderFinance() {
-        document.getElementById('ciroVal').innerText = this.db.ciro.toLocaleString();
-        const ctx = document.getElementById('ciroChart').getContext('2d');
-        if(window.myChart) window.myChart.destroy();
-        window.myChart = new Chart(ctx, {
-            type: 'bar',
-            data: { labels: ['Toplam Ciro'], datasets: [{ data: [this.db.ciro], backgroundColor: '#d2fe00' }] },
-            options: { plugins: { legend: { display: false } }, scales: { y: { display: false } } }
+    renderMembers() {
+        const list = document.getElementById('memberList');
+        const sel = document.getElementById('saleMemberSelect');
+        list.innerHTML = this.db.members.length === 0 ? '<p style="color:var(--muted); text-align:center;">Henüz üye eklenmemiş.</p>' : '';
+        sel.innerHTML = '<option value="">Üye Seç...</option>';
+
+        this.db.members.forEach(m => {
+            list.innerHTML += `
+                <div class="member-row">
+                    <div>
+                        <div style="font-weight:800;">${m.name}</div>
+                        <div style="color:var(--accent); font-size:12px; font-weight:600;">${m.sessions} Seans Mevcut</div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-action" onclick="app.adjustSession(${m.id}, -1)">Ders Yapıldı</button>
+                        <button class="btn-danger" onclick="app.deleteMember(${m.id})">Sil</button>
+                    </div>
+                </div>`;
+            sel.innerHTML += `<option value="${m.id}">${m.name}</option>`;
         });
     },
 
+    // FİNANS FONKSİYONLARI
+    processSale() {
+        const mId = document.getElementById('saleMemberSelect').value;
+        const [count, price] = document.getElementById('packSelect').value.split('|').map(Number);
+        if(!mId) return alert("Lütfen bir üye seçin.");
+
+        const member = this.db.members.find(m => m.id == mId);
+        member.sessions += count;
+        this.db.ciro += price;
+        this.db.salesCount += 1;
+        
+        this.save();
+        this.renderMembers();
+        this.renderFinance();
+        alert(`Başarılı! ${member.name} hesabına ${count} seans eklendi.`);
+    },
+
+    renderFinance() {
+        document.getElementById('totalCiro').innerText = this.db.ciro.toLocaleString();
+        document.getElementById('salesCount').innerText = this.db.salesCount;
+        
+        const ctx = document.getElementById('financeChart').getContext('2d');
+        if(window.fChart) window.fChart.destroy();
+        window.fChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Toplam Gelir'],
+                datasets: [{ data: [this.db.ciro], backgroundColor: '#d2fe00', borderRadius: 10 }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, display: false } } }
+        });
+    },
+
+    // TAKVİM FONKSİYONLARI
     renderCalendar() {
         const grid = document.getElementById('calGrid');
         grid.innerHTML = '';
-        const headers = ['Saat', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
-        headers.forEach(h => grid.innerHTML += `<div class="cal-cell cal-header">${h}</div>`);
+        const days = ['Saat', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+        days.forEach(d => grid.innerHTML += `<div class="cal-cell cal-header">${d}</div>`);
 
         for(let h = 7; h <= 22; h++) {
-            grid.innerHTML += `<div class="cal-cell" style="background:var(--card); font-weight:bold;">${h}:00</div>`;
+            grid.innerHTML += `<div class="cal-cell" style="font-weight:bold; color:white;">${h<10?'0'+h:h}:00</div>`;
             for(let d = 1; d <= 7; d++) {
-                const id = `${d}-${h}`;
-                const busy = this.db.busySlots.includes(id);
-                grid.innerHTML += `<div id="slot-${id}" class="cal-cell ${busy?'slot-busy':''}" onclick="app.toggleSlot('${id}')">${busy?'DOLU':''}</div>`;
+                const slotId = `${d}-${h}`;
+                const isBusy = this.db.busySlots.includes(slotId);
+                grid.innerHTML += `<div id="slot-${slotId}" class="cal-cell ${isBusy?'busy':''}" onclick="app.toggleSlot('${slotId}')">${isBusy?'DOLU':''}</div>`;
             }
         }
     },
@@ -207,22 +242,26 @@ const app = {
     toggleSlot(id) {
         if(this.db.busySlots.includes(id)) {
             this.db.busySlots = this.db.busySlots.filter(s => s !== id);
-        } else { this.db.busySlots.push(id); }
+        } else {
+            this.db.busySlots.push(id);
+        }
         this.save();
         this.renderCalendar();
     },
 
-    updateDietInfo() {
-        const val = document.getElementById('dietPlanSelect').value;
-        const info = {
-            "1200": "• Kahvaltı: 1 Haşlanmış yumurta, lor peyniri\n• Öğle: Izgara tavuk (100g), bol salata\n• Akşam: Sebze yemeği, 1 kase yoğurt",
-            "1500": "• Kahvaltı: 2 Yumurta, zeytin, tam buğday ekmeği\n• Öğle: Köfte (150g), az miktar bulgur pilavı\n• Akşam: Zeytinyağlı taze fasulye, yoğurt",
-            "1800": "• Kahvaltı: 3 Yumurta, peynir, yulaf ezmesi\n• Öğle: Tavuklu makarna, bol salata, ayran\n• Akşam: Izgara balık, haşlanmış sebze"
+    // DİYET FONKSİYONLARI
+    updateDiet() {
+        const val = document.getElementById('dietSelect').value;
+        const plans = {
+            "1200": "• KAHVALTI: 1 Yumurta, 1 Dilim Beyaz Peynir, Mevsim Yeşilliği\n• ÖĞLE: 100g Izgara Tavuk, Mevsim Salata\n• AKŞAM: 6 Kaşık Sebze Yemeği, 1 Kase Yoğurt",
+            "1500": "• KAHVALTI: 2 Yumurta, 2 Dilim Peynir, 1 Dilim Tam Buğday Ekmeği\n• ÖĞLE: 150g Köfte veya Kırmızı Et, 3 Kaşık Esmer Pirinç\n• AKŞAM: Zeytinyağlı Sebze, 1 Kase Yoğurt, Çeyrek Ekmek",
+            "1800": "• KAHVALTI: 3 Yumurta, Zeytin, Peynir, Yulaf Ezmesi\n• ÖĞLE: 200g Tavuk Göğsü, 1 Porsiyon Makarna veya Pilav\n• AKŞAM: 200g Balık veya Et, Izgara Sebze, Ayran",
+            "2200": "• KAHVALTI: 4 Yumurta, Bol Peynir, Ceviz, Bal, Tam Tahıllı Ekmek\n• ÖĞLE: 250g Et, Bol Pilav, Yoğurt, Salata\n• ARA ÖĞÜN: Kuruyemiş ve Meyve\n• AKŞAM: Baklagil Yemeği, Pilav, Cacık"
         };
-        document.getElementById('dietDetail').innerText = info[val];
+        document.getElementById('dietText').innerText = plans[val] || "Lütfen bir plan seçin.";
     },
 
-    save() { localStorage.setItem('studio_pro_data', JSON.stringify(this.db)); }
+    save() { localStorage.setItem('diamond_enterprise_db', JSON.stringify(this.db)); }
 };
 
 app.init();
