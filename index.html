@@ -13,39 +13,31 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* --- ÜST BAR --- */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(11,11,12,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
-        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-box { width: 35px; height: 35px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; font-weight: 800; }
         
-        .lang-btn { background: var(--card); border: 1px solid var(--border); color: white; padding: 8px 15px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .lang-btn { background: var(--card); border: 1px solid var(--border); color: white; padding: 8px 15px; border-radius: 12px; font-size: 13px; cursor: pointer; }
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 18px; border: 1px solid var(--border); }
 
-        /* --- ANA SAYFA GÖRÜNÜMÜ --- */
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .dash-item { background: var(--card); border-radius: 24px; padding: 30px 20px; text-align: center; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.2s; }
-        .dash-item:active { transform: scale(0.95); background: #1c1c1e; }
-        .dash-item span { font-size: 24px; }
-        .dash-item b { font-size: 14px; color: var(--text); }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .dash-item { background: var(--card); border-radius: 24px; padding: 30px 20px; text-align: center; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .dash-item:active { transform: scale(0.95); }
 
-        /* --- ALT NAVİGASYON --- */
         .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(22,22,24,0.95); backdrop-filter: blur(30px); display: flex; justify-content: space-around; padding: 15px 0 35px; border-top: 1px solid var(--border); z-index: 999; }
-        .nav-item { color: var(--muted); text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.3s; opacity: 0.7; }
-        .nav-item.active { color: var(--accent); opacity: 1; }
-        .nav-item div { font-size: 20px; margin-bottom: 4px; }
+        .nav-item { color: var(--muted); text-align: center; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item div { font-size: 22px; }
 
-        /* --- FORM & BUTONLAR --- */
-        input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; font-size: 15px; }
+        input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; }
         .btn { width: 100%; padding: 16px; margin-top: 12px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; }
 
-        /* --- MODAL & PAGES --- */
         .page { display: none; }
         .page.active { display: block; }
-        .admin-only { display: none; border: 1px dashed var(--accent); } /* Yönetici Modu */
 
-        /* --- CALENDAR (GRID) --- */
+        /* Takvim */
         .cal-wrapper { overflow-x: auto; border-radius: 20px; border: 1px solid var(--border); }
         .cal-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); background: var(--border); gap: 1px; min-width: 650px; }
         .cal-cell { background: var(--bg); height: 45px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
@@ -56,7 +48,7 @@
 <body>
 
 <div class="top-bar">
-    <div class="logo-area" onclick="app.showPage('home')">
+    <div class="logo-area">
         <div class="logo-box">S</div>
         <b id="txt-logo">Studio Manager Pro</b>
     </div>
@@ -68,27 +60,26 @@
 
 <div id="home" class="page container active">
     <div class="dashboard-grid">
-        <div class="dash-item" onclick="app.showPage('members')"><span>👥</span><b>Üyeler</b></div>
-        <div class="dash-item" onclick="app.showPage('calendar')"><span>📅</span><b>Takvim</b></div>
-        <div class="dash-item" onclick="app.showPage('finance')"><span>💰</span><b>Finans</b></div>
-        <div class="dash-item" onclick="app.showPage('diet')"><span>🍎</span><b>Diyet</b></div>
-        <div class="dash-item" onclick="app.showPage('contact')"><span>📞</span><b>İletişim</b></div>
-        <div class="dash-item admin-toggle-btn" onclick="app.unlockAdmin()"><span>⚙️</span><b>Yönetici</b></div>
+        <div class="dash-item" onclick="app.showPage('members')"><span>👥</span><b id="m-members">Üyeler</b></div>
+        <div class="dash-item" onclick="app.showPage('calendar')"><span>📅</span><b id="m-cal">Takvim</b></div>
+        <div class="dash-item" onclick="app.showPage('finance')"><span>💰</span><b id="m-fin">Finans</b></div>
+        <div class="dash-item" onclick="app.showPage('diet')"><span>🍎</span><b id="m-diet">Diyet</b></div>
+        <div class="dash-item" onclick="app.showPage('contact')"><span>📞</span><b id="m-cont">İletişim</b></div>
     </div>
 </div>
 
 <div id="members" class="page container">
-    <h2>Üye Yönetimi</h2>
+    <h2 id="h-members">Üye Yönetimi</h2>
     <div class="card">
         <input type="text" id="mName" placeholder="Ad Soyad">
         <input type="tel" id="mPhone" placeholder="Telefon">
-        <button class="btn" onclick="app.addMember()">Üye Ekle</button>
+        <button class="btn" id="btn-add" onclick="app.addMember()">Üye Ekle</button>
     </div>
     <div id="memberList"></div>
 </div>
 
 <div id="calendar" class="page container">
-    <h2>Haftalık Program</h2>
+    <h2 id="h-cal">Haftalık Program</h2>
     <div class="cal-wrapper">
         <div class="cal-grid" id="calGrid"></div>
     </div>
@@ -96,46 +87,44 @@
 
 <div id="finance" class="page container">
     <div class="card" style="background:var(--accent); color:black;">
-        <small>TOPLAM KASA</small>
+        <small id="t-kasa">TOPLAM KASA</small>
         <h2 style="margin:0;">₺<span id="ciroSpan">0</span></h2>
     </div>
     <div class="card">
-        <h4>Ödeme & Seans Yükle</h4>
+        <h4 id="h-sale">Satış Yap</h4>
         <select id="finMem"></select>
         <select id="finPack">
-            <option value="4">4 Seans Paketi</option>
-            <option value="8">8 Seans Paketi</option>
-            <option value="12">12 Seans Paketi</option>
-            <option value="24">24 Seans Paketi</option>
+            <option value="4">4 Seans</option>
+            <option value="8">8 Seans</option>
+            <option value="12">12 Seans</option>
         </select>
-        <input type="number" id="finAmt" placeholder="Alınan Ücret (₺)">
-        <button class="btn" onclick="app.processSale()">Satışı Onayla</button>
-    </div>
-</div>
-
-<div id="settings" class="page container admin-only" id="adminPanel">
-    <h2>Yönetici Paneli</h2>
-    <div class="card">
-        <h4>Stüdyo Bilgileri</h4>
-        <input type="text" id="setStudio" placeholder="Stüdyo İsmi">
-        <button class="btn" onclick="app.saveSettings()">Kaydet</button>
-    </div>
-    <div class="card">
-        <h4>Sistem Bakımı</h4>
-        <button class="btn" style="background:var(--border); color:white;" onclick="app.exportData()">Veri Yedekle (JSON)</button>
-        <button class="btn" style="background:var(--danger); color:white; margin-top:20px;" onclick="app.clearData()">Tüm Verileri Temizle</button>
+        <input type="number" id="finAmt" placeholder="Tutar (₺)">
+        <button class="btn" id="btn-pay" onclick="app.processSale()">Onayla</button>
     </div>
 </div>
 
 <div id="diet" class="page container">
-    <h2>Beslenme Planları</h2>
-    <div id="dietArea"></div>
+    <h2 id="h-diet">Diyet Programları</h2>
+    <div class="card">
+        <select id="dietPlan" onchange="app.showDiet()">
+            <option value="">Seçiniz / Select...</option>
+            <option value="1000">1000 Kcal Plan</option>
+            <option value="1200">1200 Kcal Plan</option>
+        </select>
+        <div id="dietContent" style="margin-top:20px; line-height:1.6; color:var(--muted);"></div>
+    </div>
+</div>
+
+<div id="settings" class="page container">
+    <h2 id="h-set">Yönetici Paneli</h2>
+    <div class="card">
+        <button class="btn" style="background:var(--danger); color:white;" onclick="app.clearData()">Sıfırla / Reset</button>
+    </div>
 </div>
 
 <div id="contact" class="page container">
-    <h2>İletişim</h2>
-    <div class="card">📞 Telefon: 0500 000 00 00</div>
-    <div class="card">📸 Instagram: @studiopro</div>
+    <h2 id="h-cont">İletişim</h2>
+    <div class="card">📞 0500 000 00 00</div>
 </div>
 
 <nav class="nav">
@@ -143,51 +132,65 @@
     <div class="nav-item" onclick="app.showPage('members', this)"><div>👥</div></div>
     <div class="nav-item" onclick="app.showPage('calendar', this)"><div>📅</div></div>
     <div class="nav-item" onclick="app.showPage('finance', this)"><div>💰</div></div>
-    <div class="nav-item admin-nav" style="display:none;" onclick="app.showPage('settings', this)"><div>⚙️</div></div>
+    <div class="nav-item" onclick="app.openAdmin(this)"><div>⚙️</div></div>
 </nav>
 
 <script>
 const app = {
-    db: JSON.parse(localStorage.getItem('sm_pro_v6')) || { 
-        members: [], ciro: 0, slots: [], lang: 'tr', 
-        settings: { name: 'Studio Manager Pro' }, isAdmin: false 
+    db: JSON.parse(localStorage.getItem('sm_pro_final')) || { members: [], ciro: 0, slots: [], lang: 'tr' },
+    
+    dict: {
+        tr: { logo: "Stüdyo Yönetimi", members: "Üyeler", cal: "Takvim", fin: "Finans", diet: "Diyet", cont: "İletişim", kasa: "TOPLAM KASA", add: "Üye Ekle", pay: "Onayla" },
+        en: { logo: "Studio Manager", members: "Members", cal: "Calendar", fin: "Finance", diet: "Diet", cont: "Contact", kasa: "TOTAL BALANCE", add: "Add Member", pay: "Confirm" }
     },
 
     init() {
-        this.applySettings();
+        this.applyLang();
         this.renderMembers();
         this.renderCalendar();
         this.updateCiro();
-        if(this.db.isAdmin) this.showAdminUI();
     },
 
-    // --- YÖNETİCİ KİLİDİ ---
-    unlockAdmin() {
-        const pass = prompt("Yönetici Şifresi:");
-        if(pass === "1234") { // Varsayılan şifre
-            this.db.isAdmin = true;
-            this.save();
-            this.showAdminUI();
-            alert("Yönetici modu aktif.");
-        }
+    changeLang() {
+        this.db.lang = document.getElementById('langSelect').value;
+        this.save();
+        this.applyLang();
     },
 
-    showAdminUI() {
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-        document.querySelector('.admin-nav').style.display = 'block';
+    applyLang() {
+        const l = this.dict[this.db.lang];
+        document.getElementById('txt-logo').innerText = l.logo;
+        document.getElementById('m-members').innerText = l.members;
+        document.getElementById('m-cal').innerText = l.cal;
+        document.getElementById('m-fin').innerText = l.fin;
+        document.getElementById('m-diet').innerText = l.diet;
+        document.getElementById('m-cont').innerText = l.cont;
+        document.getElementById('t-kasa').innerText = l.kasa;
+        document.getElementById('btn-add').innerText = l.add;
+        document.getElementById('btn-pay').innerText = l.pay;
+        document.getElementById('h-members').innerText = l.members;
+        document.getElementById('h-cal').innerText = l.cal;
+        document.getElementById('h-diet').innerText = l.diet;
+        document.getElementById('h-cont').innerText = l.cont;
     },
 
     showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(el) el.classList.add('active');
+        if(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+    },
+
+    openAdmin(el) {
+        if(prompt("Şifre / Password:") === "1234") this.showPage('settings', el);
     },
 
     addMember() {
-        const name = document.getElementById('mName').value;
-        if(!name) return;
-        this.db.members.push({ id: Date.now(), name, phone: document.getElementById('mPhone').value, sessions: 0 });
+        const n = document.getElementById('mName').value;
+        if(!n) return;
+        this.db.members.push({ id: Date.now(), name: n, phone: document.getElementById('mPhone').value, sessions: 0 });
         this.save(); this.renderMembers();
         document.getElementById('mName').value = '';
     },
@@ -195,9 +198,9 @@ const app = {
     renderMembers() {
         const list = document.getElementById('memberList');
         const fin = document.getElementById('finMem');
-        list.innerHTML = ''; fin.innerHTML = '<option value="">Üye Seç...</option>';
+        list.innerHTML = ''; fin.innerHTML = '';
         this.db.members.forEach(m => {
-            list.innerHTML += `<div class="card"><b>${m.name}</b><br><small>Kalan Seans: ${m.sessions}</small></div>`;
+            list.innerHTML += `<div class="card"><b>${m.name}</b><br><small>Seans: ${m.sessions}</small></div>`;
             fin.innerHTML += `<option value="${m.id}">${m.name}</option>`;
         });
     },
@@ -207,45 +210,40 @@ const app = {
         const pack = parseInt(document.getElementById('finPack').value);
         const amt = parseInt(document.getElementById('finAmt').value || 0);
         if(!mId) return;
-        
-        const member = this.db.members.find(x => x.id == mId);
-        member.sessions += pack;
+        const m = this.db.members.find(x => x.id == mId);
+        m.sessions += pack;
         this.db.ciro += amt;
-        this.save();
-        this.renderMembers();
-        this.updateCiro();
-        alert("Paket yüklendi ve kasa güncellendi.");
+        this.save(); this.renderMembers(); this.updateCiro();
     },
 
     renderCalendar() {
-        const grid = document.getElementById('calGrid');
-        grid.innerHTML = '';
-        const heads = ['Saat', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
-        heads.forEach(h => grid.innerHTML += `<div class="cal-cell cal-head">${h}</div>`);
-        for(let h = 9; h <= 20; h++) {
-            grid.innerHTML += `<div class="cal-cell" style="color:var(--muted)">${h}:00</div>`;
-            for(let d = 1; d <= 7; d++) {
+        const g = document.getElementById('calGrid'); g.innerHTML = '';
+        ['Saat','Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].forEach(h => g.innerHTML += `<div class="cal-cell cal-head">${h}</div>`);
+        for(let h=9; h<=20; h++) {
+            g.innerHTML += `<div class="cal-cell">${h}:00</div>`;
+            for(let d=1; d<=7; d++) {
                 const id = `${d}-${h}`;
-                const isBusy = this.db.slots.includes(id);
-                grid.innerHTML += `<div class="cal-cell ${isBusy?'busy':''}" onclick="app.toggleSlot('${id}')">${isBusy?'DOLU':''}</div>`;
+                const busy = this.db.slots.includes(id);
+                g.innerHTML += `<div class="cal-cell ${busy?'busy':''}" onclick="app.toggleSlot('${id}')">${busy?'X':''}</div>`;
             }
         }
     },
 
     toggleSlot(id) {
-        if(this.db.slots.includes(id)) this.db.slots = this.db.slots.filter(s => s !== id);
+        if(this.db.slots.includes(id)) this.db.slots = this.db.slots.filter(s => s!==id);
         else this.db.slots.push(id);
         this.save(); this.renderCalendar();
     },
 
-    updateCiro() { document.getElementById('ciroSpan').innerText = this.db.ciro.toLocaleString(); },
-    save() { localStorage.setItem('sm_pro_v6', JSON.stringify(this.db)); },
-    applySettings() { document.getElementById('txt-logo').innerText = this.db.settings.name; },
-    saveSettings() { 
-        this.db.settings.name = document.getElementById('setStudio').value; 
-        this.save(); location.reload(); 
+    showDiet() {
+        const p = document.getElementById('dietPlan').value;
+        const content = p === "1000" ? "Hafta 1: Detoks çorbası ve protein ağırlıklı beslenme..." : p === "1200" ? "Hafta 1: Dengeli öğünler, sabah yulaf, akşam ızgara..." : "";
+        document.getElementById('dietContent').innerText = content;
     },
-    clearData() { if(confirm("Tüm veriler silinecek?")) { localStorage.clear(); location.reload(); } }
+
+    updateCiro() { document.getElementById('ciroSpan').innerText = this.db.ciro; },
+    save() { localStorage.setItem('sm_pro_final', JSON.stringify(this.db)); },
+    clearData() { localStorage.clear(); location.reload(); }
 };
 app.init();
 </script>
