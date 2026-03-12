@@ -3,167 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Studio Manager Pro</title>
+    <title>Studio Manager Pro | Elite</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #0b0b0c; --card: #161618; --accent: #d2fe00;
             --text: #ffffff; --muted: #a1a1a6; --border: #2c2c2e; --danger: #ff453a;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
+        body { margin: 0; background-color: var(--bg); color: var(--text); padding-bottom: 120px; }
 
-        /* --- 🎬 AÇILIŞ ANİMASYONU --- */
+        /* --- AÇILIŞ ANİMASYONU --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--bg); z-index: 10000; display: flex; flex-direction: column;
             align-items: center; justify-content: center; transition: 0.8s ease-in-out;
         }
-        .loader-icon {
-            width: 80px; height: 80px; background: var(--accent); border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 40px; font-weight: 800; color: black;
-            animation: pulse 1.5s infinite;
-        }
-        .loader-text { margin-top: 20px; font-weight: 800; letter-spacing: 2px; color: var(--accent); opacity: 0; animation: fadeInText 1s forwards 0.5s; }
+        .loader-icon { width: 80px; height: 80px; background: var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 800; color: black; animation: pulse 1.5s infinite; }
         
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(210, 254, 0, 0.4); } 70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(210, 254, 0, 0); } 100% { transform: scale(1); } }
-        @keyframes fadeInText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ÜST BAR --- */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(11,11,12,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-box { width: 35px; height: 35px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; font-weight: 800; }
-        .lang-btn { background: var(--card); border: 1px solid var(--border); color: white; padding: 8px 15px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; appearance: none; }
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 18px; border: 1px solid var(--border); }
+        
+        /* Grafik Konteyner */
+        .chart-container { width: 100%; height: 250px; margin-top: 10px; }
 
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .dash-item { background: var(--card); border-radius: 24px; padding: 30px 20px; text-align: center; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.3s; }
-        .dash-item:active { transform: scale(0.95); background: #1c1c1e; }
-        .dash-item span { font-size: 28px; }
+        .dash-item { background: var(--card); border-radius: 24px; padding: 25px 15px; text-align: center; border: 1px solid var(--border); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.3s; }
 
         .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(22,22,24,0.95); backdrop-filter: blur(30px); display: flex; justify-content: space-around; padding: 15px 0 35px; border-top: 1px solid var(--border); z-index: 999; }
-        .nav-item { color: var(--muted); text-align: center; cursor: pointer; transition: 0.3s; }
+        .nav-item { color: var(--muted); text-align: center; cursor: pointer; }
         .nav-item.active { color: var(--accent); }
-        .nav-item div { font-size: 22px; }
 
-        input, select { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; font-size: 15px; }
+        input, select, textarea { width: 100%; padding: 16px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: #1c1c1e; color: white; font-size: 15px; }
         .btn { width: 100%; padding: 16px; margin-top: 12px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; }
         .btn-red { background: var(--danger); color: white; }
 
         .page { display: none; }
-        .page.active { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .page.active { display: block; }
 
-        .member-card { display: flex; justify-content: space-between; align-items: center; }
-        .delete-icon { color: var(--danger); font-size: 20px; cursor: pointer; padding: 5px; }
+        /* Üye Detay */
+        .member-info-row { display: none; margin-top: 10px; padding: 10px; background: #000; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+        .diet-list-item { background: #1c1c1e; padding: 15px; border-radius: 15px; margin-top: 10px; font-size: 14px; }
     </style>
 </head>
 <body onload="app.hideLoader()">
 
-<div id="loader">
-    <div class="loader-icon">S</div>
-    <div class="loader-text">STUDIO MANAGER PRO</div>
-</div>
+<div id="loader"><div class="loader-icon">S</div></div>
 
 <div class="top-bar">
     <div class="logo-area">
         <div class="logo-box">S</div>
-        <b id="txt-logo">Studio Manager Pro</b>
+        <b>Studio Manager Pro</b>
     </div>
-    <select class="lang-btn" id="langSelect" onchange="app.changeLang()">
+    <select class="lang-btn" id="langSelect" onchange="app.changeLang()" style="width: auto; padding: 5px 10px; margin: 0;">
         <option value="tr">🇹🇷 TR</option>
         <option value="en">🇺🇸 EN</option>
     </select>
 </div>
 
 <div id="home" class="page container active">
+    <div class="card">
+        <h4 style="margin:0; color:var(--accent);">AI Performans Analizi</h4>
+        <div class="chart-container">
+            <canvas id="financeChart"></canvas>
+        </div>
+        <div style="display:flex; justify-content: space-between; margin-top: 15px; font-size: 12px;">
+            <span>Gelir: <b id="totalInc">0</b> ₺</span>
+            <span>Gider: <b id="totalExp">0</b> ₺</span>
+        </div>
+    </div>
     <div class="dashboard-grid">
-        <div class="dash-item" onclick="app.showPage('members')"><span>👥</span><b id="m-members">Üyeler</b></div>
-        <div class="dash-item" onclick="app.showPage('calendar')"><span>📅</span><b id="m-cal">Takvim</b></div>
-        <div class="dash-item" onclick="app.showPage('finance')"><span>💰</span><b id="m-fin">Finans</b></div>
-        <div class="dash-item" onclick="app.showPage('diet')"><span>🍎</span><b id="m-diet">Diyet</b></div>
-        <div class="dash-item" onclick="app.showPage('contact')"><span>📞</span><b id="m-cont">İletişim</b></div>
+        <div class="dash-item" onclick="app.showPage('members')"><span>👥</span><b>Üyeler</b></div>
+        <div class="dash-item" onclick="app.showPage('calendar')"><span>📅</span><b>Takvim</b></div>
+        <div class="dash-item" onclick="app.showPage('finance')"><span>💰</span><b>Finans</b></div>
+        <div class="dash-item" onclick="app.showPage('diet')"><span>🍎</span><b>Diyet</b></div>
+        <div class="dash-item" onclick="app.showPage('contact')"><span>📞</span><b>İletişim</b></div>
     </div>
 </div>
 
 <div id="members" class="page container">
-    <h2 id="h-members">Üye Yönetimi</h2>
+    <h2>Üye Yönetimi</h2>
     <div class="card">
         <input type="text" id="mName" placeholder="Ad Soyad">
-        <input type="email" id="mEmail" placeholder="E-posta Adresi">
         <input type="tel" id="mPhone" placeholder="Telefon">
-        <button class="btn" id="btn-add" onclick="app.addMember()">Üye Kaydet</button>
+        <input type="email" id="mEmail" placeholder="E-posta">
+        <button class="btn" onclick="app.addMember()">Üye Kaydet</button>
     </div>
     <div id="memberList"></div>
 </div>
 
 <div id="calendar" class="page container">
-    <h2 id="h-cal">Haftalık Program</h2>
-    <div id="calGrid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;"></div>
+    <h2>Haftalık Program</h2>
+    <div class="card">09:00 - Pilates (Reform)</div>
+    <div class="card">18:00 - Functional Training</div>
 </div>
 
 <div id="finance" class="page container">
-    <div class="card" style="background:var(--accent); color:black; text-align:center;">
-        <small id="t-kasa">TOPLAM KASA</small>
-        <h1 style="margin:5px 0;">₺<span id="ciroSpan">0</span></h1>
+    <div class="card" style="background:var(--accent); color:black;">
+        <small>NET DURUM</small>
+        <h2 style="margin:0;">₺<span id="ciroSpan">0</span></h2>
     </div>
     <div class="card">
+        <h4>Gelir (Paket Satışı)</h4>
         <select id="finMem"></select>
+        <select id="finSessions">
+            <option value="4">4 Seans Paketi</option>
+            <option value="8">8 Seans Paketi</option>
+            <option value="12">12 Seans Paketi</option>
+            <option value="24">24 Seans Paketi</option>
+        </select>
         <input type="number" id="finAmt" placeholder="Tutar (₺)">
-        <button class="btn" id="btn-pay" onclick="app.processSale()">Ödeme Onayla</button>
+        <button class="btn" onclick="app.addRevenue()">Satışı Onayla</button>
+    </div>
+    <div class="card">
+        <h4>Gider Ekle</h4>
+        <input type="text" id="expDesc" placeholder="Harcama Açıklaması">
+        <input type="number" id="expAmt" placeholder="Harcama Tutarı (₺)">
+        <button class="btn btn-red" onclick="app.addExpense()">Gideri Kaydet</button>
     </div>
 </div>
 
 <div id="diet" class="page container">
-    <h2 id="h-diet">Sağlık & Diyet</h2>
+    <h2>Diyet Kütüphanesi</h2>
     <div class="card">
-        <input type="number" id="vWeight" placeholder="Kilo">
-        <input type="number" id="vHeight" placeholder="Boy (cm)">
-        <button class="btn" onclick="app.calcBMI()">VKE Hesapla</button>
-        <div id="vResult" style="margin-top:15px; font-weight:800; color:var(--accent); text-align:center;"></div>
-    </div>
-    <div class="card">
-        <p><b>1000 Kcal:</b> Haşlanmış yumurta, bol yeşillik, ızgara tavuk.</p>
-        <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-        <p><b>1200 Kcal:</b> Tam tahıllı ekmek, zeytin, lor peyniri, sebze yemeği.</p>
+        <select id="dietSelector" onchange="app.renderDietList()">
+            <option value="">Liste Seçin...</option>
+            <option value="1000">1000 Kcal (Aylık Detaylı)</option>
+            <option value="1200">1200 Kcal (Aylık Detaylı)</option>
+            <option value="1500">1500 Kcal (Aylık Detaylı)</option>
+            <option value="keto">Popüler: Ketojenik</option>
+            <option value="if">Popüler: Aralıklı Oruç (16:8)</option>
+        </select>
+        <div id="dietContent"></div>
     </div>
 </div>
 
 <div id="contact" class="page container">
-    <h2 id="h-cont">İletişim & Sosyal Medya</h2>
-    <div class="card" id="contactArea">
-        <p id="c-phone">📞 Tel: 0500 000 00 00</p>
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="btn" style="background:#25D366; color:white; flex:1;" onclick="window.open('https://wa.me/')">WhatsApp</button>
-            <button class="btn" style="background:#E1306C; color:white; flex:1;" onclick="window.open('https://instagram.com/')">Instagram</button>
-        </div>
+    <h2>İletişim Bilgileri</h2>
+    <div class="card" id="contactDisplay">
+        <p id="cPhone">Tel: 0500 000 00 00</p>
+        <p id="cInsta">Instagram: @studiopro</p>
+        <button class="btn" onclick="app.editContact()" style="background:#2c2c2e; color:white; font-size:12px;">Yönetici: Bilgileri Düzenle</button>
     </div>
 </div>
 
 <nav class="nav">
     <div class="nav-item active" onclick="app.showPage('home', this)"><div>🏠</div></div>
     <div class="nav-item" onclick="app.showPage('members', this)"><div>👥</div></div>
-    <div class="nav-item" onclick="app.showPage('calendar', this)"><div>📅</div></div>
     <div class="nav-item" onclick="app.showPage('finance', this)"><div>💰</div></div>
+    <div class="nav-item" onclick="app.showPage('diet', this)"><div>🍎</div></div>
 </nav>
 
 <script>
 const app = {
-    db: JSON.parse(localStorage.getItem('sm_pro_ultra')) || { members: [], ciro: 0, lang: 'tr' },
-    
-    dict: {
-        tr: { logo: "Studio Manager Pro", members: "Üyeler", cal: "Takvim", fin: "Finans", diet: "Diyet", cont: "İletişim", kasa: "TOPLAM KASA", add: "Üye Kaydet", pay: "Ödeme Onayla" },
-        en: { logo: "Studio Manager Pro", members: "Members", cal: "Schedule", fin: "Finance", diet: "Diet", cont: "Contact", kasa: "TOTAL BALANCE", add: "Save Member", pay: "Confirm Payment" }
+    db: JSON.parse(localStorage.getItem('sm_pro_v8')) || { 
+        members: [], inc: [], exp: [], 
+        contact: { phone: '0500 000 00 00', insta: '@studiopro' } 
     },
+    chart: null,
 
     init() {
-        this.applyLang();
         this.renderMembers();
-        this.updateCiro();
-        this.renderCalendar();
+        this.updateFinanceUI();
+        this.initChart();
+        this.renderContact();
     },
 
     hideLoader() {
@@ -174,30 +184,6 @@ const app = {
         }, 1500);
     },
 
-    changeLang() {
-        this.db.lang = document.getElementById('langSelect').value;
-        this.save();
-        this.applyLang();
-    },
-
-    applyLang() {
-        const l = this.dict[this.db.lang];
-        document.getElementById('txt-logo').innerText = l.logo;
-        document.getElementById('m-members').innerText = l.members;
-        document.getElementById('m-cal').innerText = l.cal;
-        document.getElementById('m-fin').innerText = l.fin;
-        document.getElementById('m-diet').innerText = l.diet;
-        document.getElementById('m-cont').innerText = l.cont;
-        document.getElementById('t-kasa').innerText = l.kasa;
-        document.getElementById('btn-add').innerText = l.add;
-        document.getElementById('btn-pay').innerText = l.pay;
-        document.getElementById('h-members').innerText = l.members;
-        document.getElementById('h-cal').innerText = l.cal;
-        document.getElementById('h-diet').innerText = l.diet;
-        document.getElementById('h-cont').innerText = l.cont;
-        document.getElementById('langSelect').value = this.db.lang;
-    },
-
     showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -205,19 +191,16 @@ const app = {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
         }
+        if(id === 'home') this.initChart();
     },
 
+    // --- ÜYE İŞLEMLERİ ---
     addMember() {
         const n = document.getElementById('mName').value;
         if(!n) return;
-        this.db.members.push({ 
-            id: Date.now(), 
-            name: n, 
-            email: document.getElementById('mEmail').value,
-            phone: document.getElementById('mPhone').value 
-        });
+        this.db.members.push({ id: Date.now(), name: n, phone: document.getElementById('mPhone').value, email: document.getElementById('mEmail').value, sessions: 0 });
         this.save(); this.renderMembers();
-        ['mName','mEmail','mPhone'].forEach(i => document.getElementById(i).value = '');
+        ['mName','mPhone','mEmail'].forEach(i => document.getElementById(i).value = '');
     },
 
     renderMembers() {
@@ -226,48 +209,116 @@ const app = {
         list.innerHTML = ''; fin.innerHTML = '';
         this.db.members.forEach(m => {
             list.innerHTML += `
-                <div class="card member-card">
-                    <div><b>${m.name}</b><br><small style="color:var(--muted)">${m.email || 'E-posta yok'}</small></div>
-                    <span class="delete-icon" onclick="app.deleteMember(${m.id})">🗑️</span>
+                <div class="card" onclick="app.toggleInfo(${m.id})">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>${m.name}</b>
+                        <span onclick="app.deleteMember(${m.id}, event)">🗑️</span>
+                    </div>
+                    <div class="member-info-row" id="info-${m.id}">
+                        📞 Tel: ${m.phone || 'Girilmedi'}<br>
+                        📧 Email: ${m.email || 'Girilmedi'}<br>
+                        🎟️ Kalan Seans: ${m.sessions}
+                    </div>
                 </div>`;
             fin.innerHTML += `<option value="${m.id}">${m.name}</option>`;
         });
     },
 
-    deleteMember(id) {
-        if(confirm("Bu üyeyi silmek istediğinize emin misiniz?")) {
+    toggleInfo(id) {
+        const el = document.getElementById('info-'+id);
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    },
+
+    deleteMember(id, e) {
+        e.stopPropagation();
+        if(confirm("Üyeyi silmek istediğinize emin misiniz?")) {
             this.db.members = this.db.members.filter(m => m.id !== id);
             this.save(); this.renderMembers();
         }
     },
 
-    processSale() {
+    // --- FİNANS & GRAFİK ---
+    addRevenue() {
+        const mId = document.getElementById('finMem').value;
         const amt = parseInt(document.getElementById('finAmt').value || 0);
+        const s = parseInt(document.getElementById('finSessions').value);
+        if(!mId || amt <= 0) return;
+        
+        const m = this.db.members.find(x => x.id == mId);
+        m.sessions += s;
+        this.db.inc.push(amt);
+        this.save(); this.updateFinanceUI();
+        alert("Satış onaylandı.");
+    },
+
+    addExpense() {
+        const amt = parseInt(document.getElementById('expAmt').value || 0);
         if(amt <= 0) return;
-        if(confirm(amt + " ₺ tutarındaki işlemi onaylıyor musunuz?")) {
-            this.db.ciro += amt;
-            this.save(); this.updateCiro();
-            document.getElementById('finAmt').value = '';
+        this.db.exp.push(amt);
+        this.save(); this.updateFinanceUI();
+        document.getElementById('expAmt').value = '';
+    },
+
+    updateFinanceUI() {
+        const totalInc = this.db.inc.reduce((a, b) => a + b, 0);
+        const totalExp = this.db.exp.reduce((a, b) => a + b, 0);
+        document.getElementById('ciroSpan').innerText = (totalInc - totalExp).toLocaleString();
+        if(document.getElementById('totalInc')) {
+            document.getElementById('totalInc').innerText = totalInc.toLocaleString();
+            document.getElementById('totalExp').innerText = totalExp.toLocaleString();
         }
     },
 
-    renderCalendar() {
-        const grid = document.getElementById('calGrid'); grid.innerHTML = '';
-        const slots = ['09:00 - Pilates', '10:30 - Yoga', '13:00 - HIIT', '18:00 - Zumba', '19:30 - Cardio', '21:00 - Stretching'];
-        slots.forEach(s => grid.innerHTML += `<div class="card" style="margin:0; text-align:center;"><b>${s}</b></div>`);
+    initChart() {
+        const ctx = document.getElementById('financeChart');
+        if(!ctx) return;
+        if(this.chart) this.chart.destroy();
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Hafta 1', 'Hafta 2', 'Hafta 3', 'Hafta 4'],
+                datasets: [{
+                    label: 'Gelir', data: [this.db.inc.slice(-4)[0] || 0, this.db.inc.slice(-3)[0] || 0, this.db.inc.slice(-2)[0] || 0, this.db.inc.slice(-1)[0] || 0],
+                    borderColor: '#d2fe00', tension: 0.4
+                }, {
+                    label: 'Gider', data: [this.db.exp.slice(-4)[0] || 0, this.db.exp.slice(-3)[0] || 0, this.db.exp.slice(-2)[0] || 0, this.db.exp.slice(-1)[0] || 0],
+                    borderColor: '#ff453a', tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
     },
 
-    calcBMI() {
-        const w = document.getElementById('vWeight').value;
-        const h = document.getElementById('vHeight').value / 100;
-        if(w && h) {
-            const bmi = (w / (h * h)).toFixed(1);
-            document.getElementById('vResult').innerText = "VKE: " + bmi;
+    // --- DİYET SİSTEMİ ---
+    renderDietList() {
+        const val = document.getElementById('dietSelector').value;
+        const box = document.getElementById('dietContent');
+        const lists = {
+            "1000": "<b>Aylık Plan:</b><br>Hafta 1: Detoks Ağırlıklı (Sıvı+Protein)<br>Hafta 2-3: Metabolizma Hızlandırıcı<br>Hafta 4: Koruma Haftası",
+            "1200": "<b>Aylık Plan:</b><br>Hafta 1: Şeker/Un Eliminasyonu<br>Hafta 2-4: Sürdürülebilir Akdeniz Tipi Beslenme",
+            "1500": "<b>Aylık Plan:</b><br>Sporcular için Kas Koruma odaklı yüksek proteinli aylık döngü.",
+            "keto": "<b>Ketojenik:</b><br>Yüksek yağ, düşük karbonhidrat. Vücudu ketozise sokar.",
+            "if": "<b>16:8 Metodu:</b><br>8 saat yemek yeme, 16 saat açlık. En popüler yağ yakma yöntemi."
+        };
+        box.innerHTML = `<div class="diet-list-item">${lists[val] || ''}</div>`;
+    },
+
+    // --- İLETİŞİM DÜZENLEME ---
+    renderContact() {
+        document.getElementById('cPhone').innerText = "Tel: " + this.db.contact.phone;
+        document.getElementById('cInsta').innerText = "Instagram: " + this.db.contact.insta;
+    },
+
+    editContact() {
+        const p = prompt("Yeni Telefon:", this.db.contact.phone);
+        const i = prompt("Yeni Instagram:", this.db.contact.insta);
+        if(p && i) {
+            this.db.contact = { phone: p, insta: i };
+            this.save(); this.renderContact();
         }
     },
 
-    updateCiro() { document.getElementById('ciroSpan').innerText = this.db.ciro.toLocaleString(); },
-    save() { localStorage.setItem('sm_pro_ultra', JSON.stringify(this.db)); }
+    save() { localStorage.setItem('sm_pro_v8', JSON.stringify(this.db)); }
 };
 app.init();
 </script>
