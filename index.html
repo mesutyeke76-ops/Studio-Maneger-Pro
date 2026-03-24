@@ -2,336 +2,163 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Studio Pro V21</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Manager Pro - V33</title>
     <style>
-        :root {
-            --bg: #050505; --card: #111113; --accent: #d2fe00;
-            --text: #ffffff; --muted: #8e8e93; --border: #1c1c1e; --danger: #ff3b30; --success: #34c759;
-        }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 110px; }
-        
-        /* UI Components */
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; display: none; animation: fadeIn 0.4s; }
-        .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--accent); color: black; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; transition: 0.2s; }
-        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: #1a1a1c; color: white; margin-bottom: 10px; }
-        
-        /* Language & Eye */
-        .lang-switch { position: fixed; top: 20px; right: 20px; z-index: 10001; background: var(--accent); color: black; padding: 6px 12px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 12px; }
-        .pass-group { position: relative; }
-        .eye-btn { position: absolute; right: 15px; top: 12px; cursor: pointer; color: var(--muted); }
-
-        /* Nav */
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,12,0.95); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid var(--border); z-index: 5000; }
-        .nav-item { color: var(--muted); font-size: 10px; text-align: center; flex: 1; cursor: pointer; font-weight: 600; }
-        .nav-item.active { color: var(--accent); }
-
-        /* Calendar Grid */
-        .cal-grid { display: grid; grid-template-columns: 80px 1fr; gap: 5px; }
-        .cal-hour { font-size: 12px; color: var(--muted); padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .cal-slot { padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13px; }
-        .slot-free { color: var(--success); }
-        .slot-busy { color: var(--danger); font-weight: 800; }
-
-        /* Tabs */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Member Actions */
-        .action-btns { display: flex; gap: 5px; margin-top: 10px; }
-        .action-btn { flex: 1; padding: 8px; border-radius: 10px; border: none; font-size: 18px; cursor: pointer; background: var(--border); }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 15px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2, h3 { color: var(--primary); text-align: center; margin-top: 0; }
+        .card { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input, button { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+        button { background: var(--accent); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        .checkin-btn { background: var(--success); font-size: 1.2em; }
+        .hidden { display: none; }
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; background: #e8f4fd; color: var(--accent); font-weight: bold; }
+        .member-data { text-align: center; margin: 20px 0; }
+        .member-data h1 { font-size: 3em; margin: 10px 0; color: var(--primary); }
+        .logout-btn { background: #95a5a6; margin-top: 30px; font-size: 0.9em; }
+        .admin-section { border-top: 2px dashed #eee; margin-top: 20px; padding-top: 20px; }
     </style>
 </head>
-<body onload="app.init()">
+<body>
 
-<div class="lang-switch" onclick="ui.toggleLang()" id="langBtn">EN</div>
+<div class="container">
+    <div id="loginSection">
+        <h2>Studio Manager Pro</h2>
+        <p style="text-align: center; color: #666;">Üye girişi için telefon numaranızı yazın</p>
+        <input type="tel" id="loginPhone" placeholder="05XX XXX XX XX" maxlength="11">
+        <button onclick="app.login()">Giriş Yap</button>
+        <p onclick="app.toggleAdmin()" style="text-align:center; font-size:12px; color:blue; cursor:pointer; text-decoration:underline;">Yönetici Paneli</p>
+    </div>
 
-<div id="auth-selection" style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px;">
-    <h1 id="txt-welcome">STUDIO PRO</h1>
-    <button class="btn" style="max-width:300px" onclick="ui.showGate('admin')" id="txt-btn-admin">👑 Yönetici Paneli</button>
-    <button class="btn" style="max-width:300px; background:var(--card); color:white; border:1px solid var(--border)" onclick="ui.showGate('member')" id="txt-btn-member">👤 Üye Girişi</button>
-</div>
-
-<div id="gate-page" style="position:fixed; inset:0; background:var(--bg); z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-    <div class="card" style="max-width:380px; width:100%;">
-        <h3 id="txt-gate-title">Giriş</h3>
-        <div class="pass-group">
-            <input type="password" id="gate-input">
-            <span class="eye-btn" onclick="ui.togglePass()">👁️</span>
+    <div id="memberPanel" class="hidden">
+        <div class="status-badge">Üye Profili</div>
+        <h3 id="welcomeName">Hoş Geldiniz</h3>
+        <div class="member-data">
+            <p>Kalan Ders Saatiniz</p>
+            <h1 id="displayBalance">0</h1>
         </div>
-        <button class="btn" onclick="app.processLogin()" id="txt-btn-login">Giriş</button>
-        <button onclick="ui.back()" style="background:none; border:none; color:var(--muted); margin-top:15px; width:100%;" id="txt-btn-back">Geri</button>
-    </div>
-</div>
-
-<div id="admin-panel" class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 id="txt-admin-title">Yönetim</h2>
-        <button onclick="app.logout()" class="btn" style="width:auto; padding:8px 15px; margin:0; font-size:11px; background:var(--danger); color:white;">ÇIKIŞ</button>
+        <button class="checkin-btn" onclick="app.doCheckIn()">Dersi Başlat / Check-in</button>
+        <button class="logout-btn" onclick="app.logout()">Güvenli Çıkış</button>
     </div>
 
-    <div class="card" style="border: 1px solid var(--accent)">
-        <h4 id="txt-admin-scan">QR Seans Takibi</h4>
-        <div id="admin-reader"></div>
-        <button class="btn" onclick="app.startAdminScanner()">📷 Tarayıcıyı Aç</button>
-    </div>
-
-    <div class="card">
-        <h4 id="txt-studio-info">Stüdyo Bilgileri (Üyeye Görünür)</h4>
-        <input type="text" id="conf-wp" placeholder="WhatsApp (Örn: 905xxx)">
-        <input type="text" id="conf-mail" placeholder="E-Posta">
-        <input type="text" id="conf-ig" placeholder="Instagram Kullanıcı Adı">
-        <button class="btn" style="background:var(--success); color:black;" onclick="app.saveConfig()">Bilgileri Güncelle</button>
-    </div>
-
-    <div class="card">
-        <h4 id="txt-add-member">Üye Ekle</h4>
-        <input type="text" id="mName" placeholder="Ad Soyad">
-        <input type="tel" id="mPhone" placeholder="Telefon">
-        <input type="email" id="mEmail" placeholder="E-Posta">
-        <div style="display:flex; gap:5px;">
-            <select id="mPack"><option value="8">8</option><option value="12">12</option></select>
-            <input type="number" id="mPrice" placeholder="₺">
-        </div>
-        <button class="btn" onclick="app.addMember()" id="txt-save">Kaydet</button>
-    </div>
-
-    <div id="admin-list"></div>
-    
-    <div class="card">
-        <h3 id="txt-cal-manage">Haftalık Program Düzenle</h3>
-        <div id="admin-cal-grid" class="cal-grid"></div>
-    </div>
-</div>
-
-<div id="member-panel" class="container">
-    <div id="tab-home" class="tab-content active">
-        <div class="card" style="text-align:center;">
-            <div id="u-qr" style="background:white; padding:10px; display:inline-block; border-radius:15px; margin-bottom:15px;"></div>
-            <h1 id="u-sess" style="font-size:70px; color:var(--accent); margin:0;">0</h1>
-            <p id="txt-rem-sess" style="color:var(--muted); font-size:12px;">KALAN SEANS</p>
-            <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-            <div style="text-align:left; font-size:13px;" id="txt-rules-list">
-                <b>Kurallar:</b><br>• İptaller 6 saat önceden.<br>• Temiz ayakkabı zorunludur.
-            </div>
-        </div>
-        
+    <div id="adminPanel" class="hidden">
+        <h3>Yönetici Kontrolü</h3>
         <div class="card">
-            <h4 id="txt-contact-studio">Stüdyo ile İletişim</h4>
-            <div id="u-contact-area" style="display:flex; gap:10px;"></div>
+            <input type="text" id="newName" placeholder="Üye Adı Soyadı">
+            <input type="tel" id="newPhone" placeholder="Telefon (05XXXXXXXXX)">
+            <input type="number" id="newBalance" placeholder="Yüklenecek Ders Sayısı">
+            <button onclick="app.addMember()" style="background:var(--primary)">Üyeyi Sisteme Kaydet</button>
         </div>
-    </div>
-
-    <div id="tab-cal" class="tab-content">
-        <h3 id="txt-nav-cal">Stüdyo Müsaitlik Durumu</h3>
-        <div class="card">
-            <div id="user-cal-grid" class="cal-grid"></div>
-        </div>
-    </div>
-
-    <div id="tab-diet" class="tab-content">
-        <h3 id="txt-nav-diet">Diyet Programları</h3>
-        <select id="diet-select" onchange="app.renderDiet()">
-            <option value="1000">1000 Kalori - Yağ Yakımı</option>
-            <option value="1200">1200 Kalori - Standart</option>
-            <option value="1500">1500 Kalori - Dengeli</option>
-            <option value="1800">1800 Kalori - Kas Kütlesi</option>
-        </select>
-        <div id="diet-content" class="card" style="font-size:14px; line-height:1.6;"></div>
+        <div id="adminList"></div>
+        <button onclick="app.toggleAdmin()" class="logout-btn">Kapat</button>
     </div>
 </div>
-
-<nav class="nav" id="member-nav">
-    <div class="nav-item active" onclick="app.switchTab('tab-home', this)" id="nav-home">🏠<br>Panel</div>
-    <div class="nav-item" onclick="app.switchTab('tab-cal', this)" id="nav-cal">📅<br>Takvim</div>
-    <div class="nav-item" onclick="app.switchTab('tab-diet', this)" id="nav-diet">🍎<br>Diyet</div>
-</nav>
 
 <script>
-const langData = {
-    tr: {
-        welcome: "STUDIO PRO", btnAdmin: "👑 Yönetici Paneli", btnMember: "👤 Üye Girişi",
-        gateTitle: "Giriş", btnLogin: "Giriş", btnBack: "Geri", adminTitle: "Yönetim",
-        adminScan: "QR Seans Takibi", studioInfo: "Stüdyo Bilgileri", addMember: "Üye Ekle",
-        save: "Kaydet", remSess: "KALAN SEANS", calManage: "Program Düzenle", contactStudio: "Stüdyo ile İletişim",
-        navHome: "Panel", navCal: "Takvim", navDiet: "Diyet"
-    },
-    en: {
-        welcome: "STUDIO PRO", btnAdmin: "👑 Admin Panel", btnMember: "👤 Member Login",
-        gateTitle: "Login", btnLogin: "Enter", btnBack: "Back", adminTitle: "Management",
-        adminScan: "QR Session Track", studioInfo: "Studio Info", addMember: "Add Member",
-        save: "Save", remSess: "REMAINING SESSIONS", calManage: "Manage Schedule", contactStudio: "Contact Studio",
-        navHome: "Home", navCal: "Schedule", navDiet: "Diet"
-    }
-};
-
-const dietData = {
-    "1000": "<b>Sabah:</b> 1 Yumurta, 1 dilim peynir, Mevsim yeşilliği.<br><b>Öğle:</b> 100g Izgara Tavuk, Salata.<br><b>Ara:</b> 10 Çiğ Badem.<br><b>Akşam:</b> 6 Yk Zeytinyağlı Sebze, 1 kase Yoğurt.",
-    "1200": "<b>Sabah:</b> 2 Yumurta, 1 dilim Tam Buğday, 5 Zeytin.<br><b>Öğle:</b> 120g Izgara Et, Bol Salata.<br><b>Ara:</b> 1 Porsiyon Meyve.<br><b>Akşam:</b> 1 kase Çorba, Sebze Yemeği, Yoğurt.",
-    "1500": "<b>Sabah:</b> Yulaf Lapası (4 yk yulaf, 1 bardak süt, tarçın).<br><b>Öğle:</b> 150g Tavuk, 4 yk Bulgur Pilavı, Salata.<br><b>Ara:</b> 1 avuç Ceviz, 1 Meyve.<br><b>Akşam:</b> 150g Balık/Et, Izgara Sebzeler, Ayran.",
-    "1800": "<b>Sabah:</b> 3 Yumurta (1 tam), 2 dilim ekmek, Lor peyniri, Pekmez.<br><b>Öğle:</b> 200g Tavuk/Kırmızı Et, 1 bardak Pirinç Pilavı, Yoğurt.<br><b>Ara:</b> Fıstık Ezmeli Muz.<br><b>Akşam:</b> Büyük porsiyon Sebze yemeği, 150g Et, 1 kase Cacık."
-};
-
 const app = {
-    db: JSON.parse(localStorage.getItem('studio_v21')) || { 
-        members: [], 
-        adminPass: "1234", 
-        config: { wp: "", mail: "", ig: "" },
-        schedule: {} 
-    },
-    user: null,
-
-    init() { 
-        ui.updateTexts(); 
-        this.renderSchedule();
+    // Verileri LocalStorage'dan Çek
+    db: JSON.parse(localStorage.getItem('studio_v33_db')) || {
+        members: []
     },
 
-    processLogin() {
-        const val = document.getElementById('gate-input').value;
-        if(ui.mode === 'admin') {
-            if(val === this.db.adminPass) this.loadPanel('admin-panel');
+    init: function() {
+        const session = localStorage.getItem('studio_session');
+        if (session) {
+            this.showMember(JSON.parse(session));
+        }
+    },
+
+    saveDB: function() {
+        localStorage.setItem('studio_v33_db', JSON.stringify(this.db));
+    },
+
+    login: function() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        const member = this.db.members.find(m => m.phone === phone);
+
+        if (member) {
+            localStorage.setItem('studio_session', JSON.stringify(member));
+            this.showMember(member);
         } else {
-            const m = this.db.members.find(u => u.phone === val);
-            if(m) { this.user = m; this.loadPanel('member-panel'); this.renderUser(); }
+            alert("Üye bulunamadı! Lütfen kayıt yaptırın.");
         }
     },
 
-    loadPanel(id) {
-        document.getElementById('gate-page').style.display='none';
-        document.getElementById('auth-selection').style.display='none';
-        document.getElementById(id).style.display='block';
-        if(id === 'member-panel') {
-            document.getElementById('member-nav').style.display='flex';
-            this.renderUser();
-            this.renderDiet();
+    showMember: function(member) {
+        // En güncel veriyi DB'den al (Session eski kalmış olabilir)
+        const currentMember = this.db.members.find(m => m.phone === member.phone);
+        
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('memberPanel').classList.remove('hidden');
+        
+        document.getElementById('welcomeName').innerText = `Merhaba, ${currentMember.name}`;
+        document.getElementById('displayBalance').innerText = currentMember.balance;
+    },
+
+    doCheckIn: function() {
+        const session = JSON.parse(localStorage.getItem('studio_session'));
+        const index = this.db.members.findIndex(m => m.phone === session.phone);
+
+        if (this.db.members[index].balance > 0) {
+            this.db.members[index].balance -= 1; // 1 ders düş
+            this.saveDB(); // Kalıcı olarak kaydet
+            this.showMember(this.db.members[index]); // Ekranı güncelle
+            alert("Check-in başarılı! İyi dersler.");
+        } else {
+            alert("Yetersiz bakiye! Lütfen yeni paket satın alın.");
         }
-        if(id === 'admin-panel') this.renderAdmin();
     },
 
-    saveConfig() {
-        this.db.config.wp = document.getElementById('conf-wp').value;
-        this.db.config.mail = document.getElementById('conf-mail').value;
-        this.db.config.ig = document.getElementById('conf-ig').value;
-        this.save();
-        alert("Güncellendi!");
+    addMember: function() {
+        const name = document.getElementById('newName').value;
+        const phone = document.getElementById('newPhone').value;
+        const balance = parseInt(document.getElementById('newBalance').value) || 0;
+
+        if (name && phone) {
+            this.db.members.push({ name, phone, balance });
+            this.saveDB();
+            this.renderAdminList();
+            alert("Üye Kaydedildi!");
+            document.getElementById('newName').value = "";
+            document.getElementById('newPhone').value = "";
+            document.getElementById('newBalance').value = "";
+        }
     },
 
-    addMember() {
-        const n = document.getElementById('mName').value, p = document.getElementById('mPhone').value, e = document.getElementById('mEmail').value;
-        if(!n || !p) return;
-        this.db.members.push({ id: Date.now(), name: n, phone: p, email: e, sessions: parseInt(document.getElementById('mPack').value) });
-        this.save(); this.renderAdmin();
-    },
-
-    renderAdmin() {
-        const list = document.getElementById('admin-list');
-        list.innerHTML = "";
+    renderAdminList: function() {
+        const list = document.getElementById('adminList');
+        list.innerHTML = "<strong>Üye Listesi:</strong>";
         this.db.members.forEach(m => {
-            list.innerHTML += `
-            <div class="card">
-                <b onclick="app.showMemberActions(${m.id})">${m.name}</b><br><small>${m.sessions} Seans</small>
-                <div class="action-btns">
-                    <button class="action-btn" onclick="window.open('https://wa.me/${m.phone}')">💬</button>
-                    <button class="action-btn" onclick="location.href='tel:${m.phone}'">📞</button>
-                    <button class="action-btn" onclick="location.href='mailto:${m.email}'">✉️</button>
-                    <button class="action-btn" onclick="app.dropSess(${m.id})" style="background:var(--accent); font-size:12px; color:black;">-1</button>
-                </div>
+            list.innerHTML += `<div style="font-size:13px; margin:5px 0; border-bottom:1px solid #eee">
+                ${m.name} | ${m.phone} | <b>${m.balance} Ders</b>
             </div>`;
         });
-        this.renderScheduleAdmin();
     },
 
-    renderUser() {
-        document.getElementById('u-sess').innerText = this.user.sessions;
-        document.getElementById('u-qr').innerHTML = "";
-        new QRCode(document.getElementById("u-qr"), { text: "ID:" + this.user.id, width: 140, height: 140 });
-        
-        // Stüdyo iletişim butonları
-        const area = document.getElementById('u-contact-area');
-        area.innerHTML = "";
-        if(this.db.config.wp) area.innerHTML += `<button class="btn" onclick="window.open('https://wa.me/${this.db.config.wp}')">WhatsApp</button>`;
-        if(this.db.config.ig) area.innerHTML += `<button class="btn" onclick="window.open('https://instagram.com/${this.db.config.ig}')">Instagram</button>`;
-        this.renderScheduleUser();
-    },
-
-    renderScheduleAdmin() {
-        const grid = document.getElementById('admin-cal-grid');
-        grid.innerHTML = "";
-        for(let i=7; i<=20; i++){
-            const time = i + ":00";
-            const state = this.db.schedule[time] || "FREE";
-            grid.innerHTML += `<div class="cal-hour">${time}</div>
-            <div class="cal-slot ${state==='FREE'?'slot-free':'slot-busy'}" onclick="app.toggleSlot('${time}')">${state}</div>`;
+    toggleAdmin: function() {
+        const panel = document.getElementById('adminPanel');
+        if(panel.classList.contains('hidden')) {
+            panel.classList.remove('hidden');
+            document.getElementById('loginSection').classList.add('hidden');
+            this.renderAdminList();
+        } else {
+            panel.classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
         }
     },
 
-    renderScheduleUser() {
-        const grid = document.getElementById('user-cal-grid');
-        grid.innerHTML = "";
-        for(let i=7; i<=20; i++){
-            const time = i + ":00";
-            const state = this.db.schedule[time] || "FREE";
-            grid.innerHTML += `<div class="cal-hour">${time}</div><div class="cal-slot ${state==='FREE'?'slot-free':'slot-busy'}">${state}</div>`;
-        }
-    },
-
-    toggleSlot(time) {
-        const current = this.db.schedule[time] || "FREE";
-        this.db.schedule[time] = current === "FREE" ? "DOLU / BUSY" : "FREE";
-        this.save(); this.renderScheduleAdmin();
-    },
-
-    renderDiet() {
-        const val = document.getElementById('diet-select').value;
-        document.getElementById('diet-content').innerHTML = dietData[val];
-    },
-
-    startAdminScanner() {
-        document.getElementById('admin-reader').style.display='block';
-        const sc = new Html5Qrcode("admin-reader");
-        sc.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => {
-            const id = text.split("ID:")[1];
-            const m = this.db.members.find(x => x.id == id);
-            if(m && m.sessions > 0) {
-                m.sessions--; this.save(); this.renderAdmin();
-                alert(m.name + " - Seans düşüldü!");
-            }
-            sc.stop(); document.getElementById('admin-reader').style.display='none';
-        });
-    },
-
-    dropSess(id) { const m = this.db.members.find(x => x.id == id); if(m.sessions > 0) { m.sessions--; this.save(); this.renderAdmin(); } },
-    switchTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    },
-    save() { localStorage.setItem('studio_v21', JSON.stringify(this.db)); },
-    logout() { location.reload(); }
-};
-
-const ui = {
-    lang: 'tr',
-    showGate(mode) { this.mode = mode; document.getElementById('auth-selection').style.display='none'; document.getElementById('gate-page').style.display='flex'; },
-    back() { document.getElementById('gate-page').style.display='none'; document.getElementById('auth-selection').style.display='flex'; },
-    togglePass() { const i = document.getElementById('gate-input'); i.type = i.type==='password'?'text':'password'; },
-    toggleLang() { this.lang = this.lang==='tr'?'en':'tr'; document.getElementById('langBtn').innerText = this.lang.toUpperCase(); this.updateTexts(); app.init(); },
-    updateTexts() {
-        const d = langData[this.lang];
-        for(let id in d) { const el = document.getElementById('txt-'+id); if(el) el.innerText = d[id]; }
-        document.getElementById('nav-home').innerHTML = `🏠<br>${d.navHome}`;
-        document.getElementById('nav-cal').innerHTML = `📅<br>${d.navCal}`;
-        document.getElementById('nav-diet').innerHTML = `🍎<br>${d.navDiet}`;
+    logout: function() {
+        localStorage.removeItem('studio_session');
+        location.reload();
     }
 };
+
+app.init();
 </script>
+
 </body>
 </html>
