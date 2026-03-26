@@ -1,164 +1,714 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Manager Pro - V33</title>
-    <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 15px; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2, h3 { color: var(--primary); text-align: center; margin-top: 0; }
-        .card { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input, button { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
-        button { background: var(--accent); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        button:active { transform: scale(0.98); }
-        .checkin-btn { background: var(--success); font-size: 1.2em; }
-        .hidden { display: none; }
-        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; background: #e8f4fd; color: var(--accent); font-weight: bold; }
-        .member-data { text-align: center; margin: 20px 0; }
-        .member-data h1 { font-size: 3em; margin: 10px 0; color: var(--primary); }
-        .logout-btn { background: #95a5a6; margin-top: 30px; font-size: 0.9em; }
-        .admin-section { border-top: 2px dashed #eee; margin-top: 20px; padding-top: 20px; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MY Pilates & Cimnastik Bodrum</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#0a0a0a;--dark:#111;--card:#1a1a1a;
+  --teal:#00d4c8;--teal2:#00a8a0;--teal3:#007d78;
+  --white:#fff;--gray:#888;--light:#ccc;
+  --danger:#ff4444;--success:#00cc88;--warning:#ffaa00;
+}
+body{background:var(--black);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .8s}
+.splash-logo{font-size:2.8rem;font-weight:900;letter-spacing:3px;background:linear-gradient(135deg,var(--teal),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;animation:fadeInDown 1s ease}
+.splash-sub{font-size:1rem;color:var(--teal);letter-spacing:6px;margin-top:10px;animation:fadeInUp 1.2s ease}
+.splash-bar{width:200px;height:3px;background:var(--card);border-radius:3px;margin-top:40px;overflow:hidden;animation:fadeIn 1.5s ease}
+.splash-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:3px;animation:loadBar 2.5s ease forwards}
+.splash-wave{display:flex;gap:6px;margin-top:30px}
+.splash-wave span{width:8px;height:8px;background:var(--teal);border-radius:50%;animation:wave 1.2s ease-in-out infinite}
+.splash-wave span:nth-child(2){animation-delay:.15s}
+.splash-wave span:nth-child(3){animation-delay:.3s}
+.splash-wave span:nth-child(4){animation-delay:.45s}
+.splash-wave span:nth-child(5){animation-delay:.6s}
+@keyframes wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes loadBar{0%{width:0}100%{width:100%}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* LOGIN */
+#loginScreen{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse at center,#0d1f1f 0%,var(--black) 70%)}
+#loginScreen.active{display:flex}
+.login-box{background:var(--card);border:1px solid #222;border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,212,200,.1)}
+.login-logo{text-align:center;margin-bottom:30px}
+.login-logo h1{font-size:1.8rem;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,var(--teal),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-logo p{color:var(--teal);font-size:.8rem;letter-spacing:4px;margin-top:5px}
+.login-tabs{display:flex;margin-bottom:25px;border-radius:10px;overflow:hidden;border:1px solid #333}
+.login-tab{flex:1;padding:10px;text-align:center;cursor:pointer;background:transparent;color:var(--gray);border:none;font-size:.9rem;transition:all .3s}
+.login-tab.active{background:var(--teal);color:var(--black);font-weight:700}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.8rem;color:var(--teal);margin-bottom:6px;letter-spacing:1px}
+.form-group input{width:100%;padding:12px 15px;background:#0f0f0f;border:1px solid #333;border-radius:10px;color:var(--white);font-size:.95rem;outline:none;transition:border-color .3s}
+.form-group input:focus{border-color:var(--teal)}
+.remember-row{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.remember-row input[type=checkbox]{accent-color:var(--teal);width:16px;height:16px}
+.remember-row label{color:var(--gray);font-size:.85rem;cursor:pointer}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal2));border:none;border-radius:10px;color:var(--black);font-weight:700;font-size:1rem;cursor:pointer;transition:all .3s;letter-spacing:1px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,212,200,.3)}
+.login-error{color:var(--danger);text-align:center;font-size:.85rem;margin-top:10px;min-height:20px}
+.lang-bar{display:flex;justify-content:center;gap:10px;margin-bottom:25px}
+.lang-btn{padding:5px 14px;border-radius:20px;border:1px solid #333;background:transparent;color:var(--gray);cursor:pointer;font-size:.8rem;transition:all .3s}
+.lang-btn.active{border-color:var(--teal);color:var(--teal);background:rgba(0,212,200,.1)}
+
+/* APP */
+#appScreen{display:none}
+#appScreen.active{display:block}
+.topbar{background:var(--dark);border-bottom:1px solid #222;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-logo{font-size:1.1rem;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,var(--teal),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-user{font-size:.8rem;color:var(--gray)}
+.btn-logout{padding:6px 14px;background:transparent;border:1px solid #444;border-radius:8px;color:var(--gray);cursor:pointer;font-size:.8rem;transition:all .3s}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger)}
+.nav-tabs{display:flex;background:var(--dark);border-bottom:1px solid #222;overflow-x:auto;padding:0 10px}
+.nav-tab{padding:14px 20px;cursor:pointer;color:var(--gray);border:none;background:transparent;border-bottom:2px solid transparent;white-space:nowrap;font-size:.9rem;transition:all .3s}
+.nav-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-content{display:none;padding:20px}
+.tab-content.active{display:block}
+
+/* KARTLAR */
+.card{background:var(--card);border:1px solid #222;border-radius:14px;padding:20px;margin-bottom:16px}
+.card-title{font-size:1rem;font-weight:700;color:var(--white)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid #222;border-radius:12px;padding:16px;text-align:center}
+.stat-num{font-size:2rem;font-weight:900;color:var(--teal)}
+.stat-label{font-size:.75rem;color:var(--gray);margin-top:4px;letter-spacing:1px}
+
+/* TABLO */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;font-size:.75rem;color:var(--teal);letter-spacing:1px;border-bottom:1px solid #222}
+td{padding:10px 12px;font-size:.85rem;color:var(--light);border-bottom:1px solid #1a1a1a}
+tr:hover td{background:rgba(0,212,200,.03)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-success{background:rgba(0,204,136,.15);color:var(--success)}
+.badge-warning{background:rgba(255,170,0,.15);color:var(--warning)}
+.badge-danger{background:rgba(255,68,68,.15);color:var(--danger)}
+.badge-teal{background:rgba(0,212,200,.15);color:var(--teal)}
+
+/* BUTONLAR */
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .3s}
+.btn-teal{background:var(--teal);color:var(--black)}
+.btn-teal:hover{background:var(--teal2)}
+.btn-outline{background:transparent;border:1px solid #444;color:var(--gray)}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal)}
+.btn-danger{background:rgba(255,68,68,.15);color:var(--danger);border:1px solid rgba(255,68,68,.3)}
+.btn-sm{padding:5px 10px;font-size:.78rem}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+.form-field{margin-bottom:14px}
+.form-field label{display:block;font-size:.78rem;color:var(--teal);margin-bottom:5px}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:10px 13px;background:#0f0f0f;border:1px solid #333;border-radius:8px;color:var(--white);font-size:.9rem;outline:none;transition:border-color .3s}
+.form-field input:focus,.form-field select:focus{border-color:var(--teal)}
+.form-field select option{background:var(--dark)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid #333;border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1.1rem;font-weight:700;color:var(--teal);margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ÜYE */
+.member-card{background:var(--card);border:1px solid #222;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;transition:border-color .3s}
+.member-card:hover{border-color:#333}
+.member-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal3));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:var(--black);flex-shrink:0}
+.member-info{flex:1}
+.member-name{font-weight:700;font-size:.95rem}
+.member-detail{font-size:.78rem;color:var(--gray);margin-top:2px}
+.member-actions{display:flex;gap:6px}
+.search-bar{display:flex;gap:10px;margin-bottom:16px}
+.search-bar input{flex:1;padding:10px 15px;background:var(--card);border:1px solid #333;border-radius:10px;color:var(--white);outline:none;font-size:.9rem}
+.search-bar input:focus{border-color:var(--teal)}
+.session-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1a1a1a}
+.session-date{font-size:.8rem;color:var(--gray)}
+.session-type{font-size:.85rem;color:var(--white)}
+.pkg-bar{background:#1a1a1a;border-radius:20px;height:8px;overflow:hidden;margin-top:6px}
+.pkg-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .5s}
+#memberQrCode,#myQrCode{display:inline-block;padding:15px;background:white;border-radius:12px;margin:10px auto}
+
+/* TOAST */
+#toast{position:fixed;bottom:30px;right:20px;z-index:9999;padding:12px 22px;border-radius:10px;font-size:.9rem;font-weight:600;opacity:0;transform:translateY(20px);transition:all .4s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.success{background:var(--success);color:#000}
+#toast.error{background:var(--danger);color:#fff}
+#toast.info{background:var(--teal);color:#000}
+
+/* QR */
+.qr-result{padding:15px;background:rgba(0,212,200,.1);border:1px solid var(--teal);border-radius:10px;text-align:center;margin-top:15px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}.modal{padding:20px}}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <div id="loginSection">
-        <h2>Studio Manager Pro</h2>
-        <p style="text-align: center; color: #666;">Üye girişi için telefon numaranızı yazın</p>
-        <input type="tel" id="loginPhone" placeholder="05XX XXX XX XX" maxlength="11">
-        <button onclick="app.login()">Giriş Yap</button>
-        <p onclick="app.toggleAdmin()" style="text-align:center; font-size:12px; color:blue; cursor:pointer; text-decoration:underline;">Yönetici Paneli</p>
-    </div>
-
-    <div id="memberPanel" class="hidden">
-        <div class="status-badge">Üye Profili</div>
-        <h3 id="welcomeName">Hoş Geldiniz</h3>
-        <div class="member-data">
-            <p>Kalan Ders Saatiniz</p>
-            <h1 id="displayBalance">0</h1>
-        </div>
-        <button class="checkin-btn" onclick="app.doCheckIn()">Dersi Başlat / Check-in</button>
-        <button class="logout-btn" onclick="app.logout()">Güvenli Çıkış</button>
-    </div>
-
-    <div id="adminPanel" class="hidden">
-        <h3>Yönetici Kontrolü</h3>
-        <div class="card">
-            <input type="text" id="newName" placeholder="Üye Adı Soyadı">
-            <input type="tel" id="newPhone" placeholder="Telefon (05XXXXXXXXX)">
-            <input type="number" id="newBalance" placeholder="Yüklenecek Ders Sayısı">
-            <button onclick="app.addMember()" style="background:var(--primary)">Üyeyi Sisteme Kaydet</button>
-        </div>
-        <div id="adminList"></div>
-        <button onclick="app.toggleAdmin()" class="logout-btn">Kapat</button>
-    </div>
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">MY PİLATES<br>&amp; CİMNASTİK</div>
+  <div class="splash-sub">BODRUM</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  <div class="splash-wave"><span></span><span></span><span></span><span></span><span></span></div>
 </div>
 
+<!-- LOGIN -->
+<div id="loginScreen" class="screen">
+  <div class="login-box">
+    <div class="lang-bar">
+      <button class="lang-btn active" onclick="setLang('tr')">🇹🇷 TR</button>
+      <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+      <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
+      <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+    </div>
+    <div class="login-logo">
+      <h1>MY PİLATES</h1>
+      <p>&amp; CİMNASTİK BODRUM</p>
+    </div>
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchLoginTab('member')" id="tabMember">Üye Girişi</button>
+      <button class="login-tab" onclick="switchLoginTab('admin')" id="tabAdmin">Yönetici</button>
+    </div>
+    <div id="memberLoginForm">
+      <div class="form-group">
+        <label>Telefon Numarası</label>
+        <input type="tel" id="memberPhone" placeholder="05XX XXX XX XX"/>
+      </div>
+      <div class="form-group">
+        <label>Şifre (Telefon No)</label>
+        <input type="password" id="memberPassword" placeholder="••••••••"/>
+      </div>
+      <div class="remember-row">
+        <input type="checkbox" id="rememberMember"/>
+        <label for="rememberMember">Beni hatırla</label>
+      </div>
+      <button class="btn-primary" onclick="loginMember()">Giriş Yap</button>
+    </div>
+    <div id="adminLoginForm" style="display:none">
+      <div class="form-group">
+        <label>Yönetici Şifresi</label>
+        <input type="password" id="adminPassword" placeholder="••••••••"/>
+      </div>
+      <div class="remember-row">
+        <input type="checkbox" id="rememberAdmin"/>
+        <label for="rememberAdmin">Beni hatırla</label>
+      </div>
+      <button class="btn-primary" onclick="loginAdmin()">Giriş Yap</button>
+    </div>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ANA UYGULAMA -->
+<div id="appScreen">
+  <div class="topbar">
+    <div class="topbar-logo">MY PİLATES</div>
+    <div class="topbar-right">
+      <span class="topbar-user" id="topbarUser"></span>
+      <button class="btn-logout" onclick="logout()">Çıkış</button>
+    </div>
+  </div>
+  <div class="nav-tabs" id="navTabs"></div>
+  <div id="tabContents"></div>
+</div>
+
+<!-- MODAL: Üye Ekle/Düzenle -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <div class="modal-title" id="memberModalTitle">Üye Ekle</div>
+    <div class="form-row">
+      <div class="form-field"><label>Ad</label><input type="text" id="mName" placeholder="Ad"/></div>
+      <div class="form-field"><label>Soyad</label><input type="text" id="mSurname" placeholder="Soyad"/></div>
+    </div>
+    <div class="form-field"><label>Telefon</label><input type="tel" id="mPhone" placeholder="05XX XXX XX XX"/></div>
+    <div class="form-field"><label>E-posta</label><input type="email" id="mEmail" placeholder="ornek@mail.com"/></div>
+    <div class="form-field"><label>Doğum Tarihi</label><input type="date" id="mBirth"/></div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Paket Türü</label>
+        <select id="mPackage">
+          <option value="8">8 Seans</option>
+          <option value="12">12 Seans</option>
+          <option value="20">20 Seans</option>
+          <option value="monthly">Aylık Sınırsız</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Paket Başlangıç</label><input type="date" id="mPackageStart"/></div>
+    </div>
+    <div class="form-field">
+      <label>Notlar</label>
+      <textarea id="mNotes" rows="2" style="width:100%;background:#0f0f0f;border:1px solid #333;border-radius:8px;color:#fff;padding:10px;resize:none;outline:none"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('memberModal')">İptal</button>
+      <button class="btn btn-teal" onclick="saveMember()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Seans Ekle -->
+<div class="modal-overlay" id="sessionModal">
+  <div class="modal">
+    <div class="modal-title">Seans Ekle</div>
+    <div class="form-field"><label>Üye Seç</label><select id="sMember"></select></div>
+    <div class="form-field"><label>Tarih</label><input type="date" id="sDate"/></div>
+    <div class="form-field">
+      <label>Seans Türü</label>
+      <select id="sType">
+        <option value="Pilates">Pilates</option>
+        <option value="Cimnastik">Cimnastik</option>
+        <option value="Reformer">Reformer</option>
+        <option value="Özel Ders">Özel Ders</option>
+        <option value="Grup">Grup Dersi</option>
+      </select>
+    </div>
+    <div class="form-field"><label>Not</label><input type="text" id="sNote" placeholder="Opsiyonel"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('sessionModal')">İptal</button>
+      <button class="btn btn-teal" onclick="saveSession()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Üye Detay -->
+<div class="modal-overlay" id="memberDetailModal">
+  <div class="modal" style="max-width:550px">
+    <div class="modal-title" id="detailName"></div>
+    <div id="detailContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('memberDetailModal')">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<!-- FIREBASE CONFIG -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script>
-const app = {
-    // Verileri LocalStorage'dan Çek
-    db: JSON.parse(localStorage.getItem('studio_v33_db')) || {
-        members: []
-    },
-
-    init: function() {
-        const session = localStorage.getItem('studio_session');
-        if (session) {
-            this.showMember(JSON.parse(session));
-        }
-    },
-
-    saveDB: function() {
-        localStorage.setItem('studio_v33_db', JSON.stringify(this.db));
-    },
-
-    login: function() {
-        const phone = document.getElementById('loginPhone').value.trim();
-        const member = this.db.members.find(m => m.phone === phone);
-
-        if (member) {
-            localStorage.setItem('studio_session', JSON.stringify(member));
-            this.showMember(member);
-        } else {
-            alert("Üye bulunamadı! Lütfen kayıt yaptırın.");
-        }
-    },
-
-    showMember: function(member) {
-        // En güncel veriyi DB'den al (Session eski kalmış olabilir)
-        const currentMember = this.db.members.find(m => m.phone === member.phone);
-        
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('adminPanel').classList.add('hidden');
-        document.getElementById('memberPanel').classList.remove('hidden');
-        
-        document.getElementById('welcomeName').innerText = `Merhaba, ${currentMember.name}`;
-        document.getElementById('displayBalance').innerText = currentMember.balance;
-    },
-
-    doCheckIn: function() {
-        const session = JSON.parse(localStorage.getItem('studio_session'));
-        const index = this.db.members.findIndex(m => m.phone === session.phone);
-
-        if (this.db.members[index].balance > 0) {
-            this.db.members[index].balance -= 1; // 1 ders düş
-            this.saveDB(); // Kalıcı olarak kaydet
-            this.showMember(this.db.members[index]); // Ekranı güncelle
-            alert("Check-in başarılı! İyi dersler.");
-        } else {
-            alert("Yetersiz bakiye! Lütfen yeni paket satın alın.");
-        }
-    },
-
-    addMember: function() {
-        const name = document.getElementById('newName').value;
-        const phone = document.getElementById('newPhone').value;
-        const balance = parseInt(document.getElementById('newBalance').value) || 0;
-
-        if (name && phone) {
-            this.db.members.push({ name, phone, balance });
-            this.saveDB();
-            this.renderAdminList();
-            alert("Üye Kaydedildi!");
-            document.getElementById('newName').value = "";
-            document.getElementById('newPhone').value = "";
-            document.getElementById('newBalance').value = "";
-        }
-    },
-
-    renderAdminList: function() {
-        const list = document.getElementById('adminList');
-        list.innerHTML = "<strong>Üye Listesi:</strong>";
-        this.db.members.forEach(m => {
-            list.innerHTML += `<div style="font-size:13px; margin:5px 0; border-bottom:1px solid #eee">
-                ${m.name} | ${m.phone} | <b>${m.balance} Ders</b>
-            </div>`;
-        });
-    },
-
-    toggleAdmin: function() {
-        const panel = document.getElementById('adminPanel');
-        if(panel.classList.contains('hidden')) {
-            panel.classList.remove('hidden');
-            document.getElementById('loginSection').classList.add('hidden');
-            this.renderAdminList();
-        } else {
-            panel.classList.add('hidden');
-            document.getElementById('loginSection').classList.remove('hidden');
-        }
-    },
-
-    logout: function() {
-        localStorage.removeItem('studio_session');
-        location.reload();
-    }
+// ⚠️ KENDİ FİREBASE BİLGİLERİNİ GİR
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
-
-app.init();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 </script>
 
+<script>
+// ===== DİL =====
+const i18n={
+  tr:{memberLogin:'Üye Girişi',adminLogin:'Yönetici',dashboard:'Panel',members:'Üyeler',sessions:'Seanslar',qrScan:'QR Okut',myCard:'Kartım',myHistory:'Geçmişim',addMember:'Üye Ekle',addSession:'Seans Ekle',save:'Kaydet',cancel:'İptal',close:'Kapat',totalMembers:'Toplam Üye',todaySessions:'Bugün',activePkgs:'Aktif Paket',expiringSoon:'Biten Yakın',search:'Üye Ara...',remaining:'Kalan',used:'Kullanılan',noData:'Veri yok',myQR:'QR Kodum',deleteConfirm:'Silmek istediğinize emin misiniz?',sessionAdded:'Seans eklendi!',memberSaved:'Üye kaydedildi!',sessionChecked:'Seans onaylandı! ✓',invalidQR:'Geçersiz QR',wrongPass:'Hatalı şifre!',memberNotFound:'Üye bulunamadı',recentSessions:'Son Seanslar'},
+  en:{memberLogin:'Member Login',adminLogin:'Admin',dashboard:'Dashboard',members:'Members',sessions:'Sessions',qrScan:'Scan QR',myCard:'My Card',myHistory:'My History',addMember:'Add Member',addSession:'Add Session',save:'Save',cancel:'Cancel',close:'Close',totalMembers:'Total Members',todaySessions:'Today',activePkgs:'Active Pkg',expiringSoon:'Expiring Soon',search:'Search...',remaining:'Remaining',used:'Used',noData:'No data',myQR:'My QR Code',deleteConfirm:'Are you sure?',sessionAdded:'Session added!',memberSaved:'Member saved!',sessionChecked:'Session confirmed! ✓',invalidQR:'Invalid QR',wrongPass:'Wrong password!',memberNotFound:'Member not found',recentSessions:'Recent Sessions'},
+  de:{memberLogin:'Mitglied Login',adminLogin:'Admin',dashboard:'Dashboard',members:'Mitglieder',sessions:'Sitzungen',qrScan:'QR Lesen',myCard:'Meine Karte',myHistory:'Mein Verlauf',addMember:'Mitglied hinzufügen',addSession:'Sitzung hinzufügen',save:'Speichern',cancel:'Abbrechen',close:'Schließen',totalMembers:'Mitglieder',todaySessions:'Heute',activePkgs:'Aktive Pakete',expiringSoon:'Läuft ab',search:'Suchen...',remaining:'Verbleibend',used:'Genutzt',noData:'Keine Daten',myQR:'Mein QR-Code',deleteConfirm:'Wirklich löschen?',sessionAdded:'Sitzung hinzugefügt!',memberSaved:'Mitglied gespeichert!',sessionChecked:'Bestätigt! ✓',invalidQR:'Ungültiger QR',wrongPass:'Falsches Passwort!',memberNotFound:'Nicht gefunden',recentSessions:'Letzte Sitzungen'},
+  ru:{memberLogin:'Вход',adminLogin:'Админ',dashboard:'Панель',members:'Участники',sessions:'Сеансы',qrScan:'Скан QR',myCard:'Моя карта',myHistory:'История',addMember:'Добавить',addSession:'Добавить сеанс',save:'Сохранить',cancel:'Отмена',close:'Закрыть',totalMembers:'Участников',todaySessions:'Сегодня',activePkgs:'Активные',expiringSoon:'Истекает',search:'Поиск...',remaining:'Осталось',used:'Использовано',noData:'Нет данных',myQR:'Мой QR',deleteConfirm:'Удалить?',sessionAdded:'Добавлено!',memberSaved:'Сохранено!',sessionChecked:'Подтверждено! ✓',invalidQR:'Недействительный QR',wrongPass:'Неверный пароль!',memberNotFound:'Не найдено',recentSessions:'Последние сеансы'}
+};
+let lang=localStorage.getItem('myp_lang')||'tr';
+let currentUser=null,editingMemberId=null,allMembers=[],qrScannerInline=null;
+const t=k=>(i18n[lang]&&i18n[lang][k])||i18n.tr[k]||k;
+
+function setLang(l){lang=l;localStorage.setItem('myp_lang',l);document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.lang-btn').forEach(b=>{if(b.textContent.includes(l.toUpperCase()))b.classList.add('active')})}
+
+function showToast(msg,type='info'){const el=document.getElementById('toast');el.textContent=msg;el.className=`show ${type}`;setTimeout(()=>el.className='',3000)}
+
+// SPLASH
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const s=document.getElementById('splash');
+    s.style.opacity='0';
+    setTimeout(()=>{s.style.display='none';checkAutoLogin()},800);
+  },3000);
+});
+
+function checkAutoLogin(){
+  const saved=localStorage.getItem('myp_session');
+  if(saved){currentUser=JSON.parse(saved);showApp()}
+  else showLogin();
+}
+
+function showLogin(){document.getElementById('loginScreen').classList.add('active')}
+function switchLoginTab(tab){
+  document.getElementById('memberLoginForm').style.display=tab==='member'?'block':'none';
+  document.getElementById('adminLoginForm').style.display=tab==='admin'?'block':'none';
+  document.querySelectorAll('.login-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tab==='member'?'tabMember':'tabAdmin').classList.add('active');
+}
+
+function loginAdmin(){
+  const pass=document.getElementById('adminPassword').value;
+  if(pass==='Mesut.4848'){
+    currentUser={role:'admin',name:'Yönetici'};
+    if(document.getElementById('rememberAdmin').checked)localStorage.setItem('myp_session',JSON.stringify(currentUser));
+    document.getElementById('loginScreen').classList.remove('active');
+    showApp();
+  }else{document.getElementById('loginError').textContent=t('wrongPass')}
+}
+
+async function loginMember(){
+  const phone=document.getElementById('memberPhone').value.trim().replace(/\s/g,'');
+  const pass=document.getElementById('memberPassword').value.trim().replace(/\s/g,'');
+  if(!phone||!pass)return;
+  const snap=await db.collection('members').where('phone','==',phone).get();
+  if(snap.empty){document.getElementById('loginError').textContent=t('memberNotFound');return}
+  const doc=snap.docs[0];const member=doc.data();
+  if(pass!==phone&&pass!==member.phone){document.getElementById('loginError').textContent=t('wrongPass');return}
+  currentUser={role:'member',id:doc.id,...member};
+  if(document.getElementById('rememberMember').checked)localStorage.setItem('myp_session',JSON.stringify(currentUser));
+  document.getElementById('loginScreen').classList.remove('active');
+  showApp();
+}
+
+function logout(){
+  localStorage.removeItem('myp_session');currentUser=null;
+  document.getElementById('appScreen').classList.remove('active');
+  document.getElementById('loginScreen').classList.add('active');
+  document.getElementById('adminPassword').value='';
+  document.getElementById('memberPassword').value='';
+  document.getElementById('loginError').textContent='';
+}
+
+function showApp(){
+  document.getElementById('appScreen').classList.add('active');
+  document.getElementById('topbarUser').textContent=currentUser.role==='admin'?'👤 Yönetici':`👤 ${currentUser.name||''} ${currentUser.surname||''}`;
+  buildTabs();
+}
+
+function buildTabs(){
+  const nav=document.getElementById('navTabs');
+  const content=document.getElementById('tabContents');
+  nav.innerHTML='';content.innerHTML='';
+  const tabs=currentUser.role==='admin'
+    ?[{id:'dashboard',label:t('dashboard'),build:buildDashboard},{id:'members',label:t('members'),build:buildMembers},{id:'sessions',label:t('sessions'),build:buildSessions},{id:'qrscan',label:t('qrScan'),build:buildQRScan}]
+    :[{id:'mycard',label:t('myCard'),build:buildMyCard},{id:'myhistory',label:t('myHistory'),build:buildMyHistory}];
+  tabs.forEach((tab,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nav-tab'+(i===0?' active':'');
+    btn.textContent=tab.label;
+    btn.onclick=()=>{
+      document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      const tc=document.getElementById('tc-'+tab.id);
+      tc.classList.add('active');
+      tab.build(tc);
+    };
+    nav.appendChild(btn);
+    const tc=document.createElement('div');
+    tc.id='tc-'+tab.id;
+    tc.className='tab-content'+(i===0?' active':'');
+    content.appendChild(tc);
+    if(i===0)tab.build(tc);
+  });
+}
+
+// PANEL
+async function buildDashboard(container){
+  container.innerHTML='<p style="color:var(--gray);padding:20px">Yükleniyor...</p>';
+  const[mSnap,sSnap]=await Promise.all([db.collection('members').get(),db.collection('sessions').get()]);
+  const members=mSnap.docs.map(d=>({id:d.id,...d.data()}));
+  const sessions=sSnap.docs.map(d=>({id:d.id,...d.data()}));
+  const today=new Date().toISOString().split('T')[0];
+  const todayCount=sessions.filter(s=>s.date===today).length;
+  const expiring=members.filter(m=>{
+    if(!m.packageStart||m.packageType==='monthly')return false;
+    const used=sessions.filter(s=>s.memberId===m.id).length;
+    return(parseInt(m.packageType)||0)-used<=2;
+  }).length;
+  container.innerHTML=`
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">${members.length}</div><div class="stat-label">${t('totalMembers')}</div></div>
+      <div class="stat-card"><div class="stat-num">${todayCount}</div><div class="stat-label">${t('todaySessions')}</div></div>
+      <div class="stat-card"><div class="stat-num">${members.length}</div><div class="stat-label">${t('activePkgs')}</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--warning)">${expiring}</div><div class="stat-label">${t('expiringSoon')}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">${t('recentSessions')}</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Ad Soyad</th><th>Tür</th><th>Tarih</th></tr></thead>
+        <tbody>${sessions.sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,10).map(s=>{
+          const m=members.find(x=>x.id===s.memberId);
+          return`<tr><td>${m?m.name+' '+m.surname:'-'}</td><td><span class="badge badge-teal">${s.type}</span></td><td>${s.date}</td></tr>`;
+        }).join('')||`<tr><td colspan="3" style="text-align:center;color:var(--gray)">${t('noData')}</td></tr>`}</tbody>
+      </table></div>
+    </div>`;
+}
+
+// ÜYELER
+async function buildMembers(container){
+  container.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap">
+      <div class="search-bar" style="margin:0;flex:1;min-width:200px">
+        <input type="text" id="memberSearch" placeholder="${t('search')}" oninput="filterMembers()"/>
+      </div>
+      <button class="btn btn-teal" onclick="openAddMember()">${t('addMember')}</button>
+    </div>
+    <div id="memberList"></div>`;
+  await loadMembers();
+}
+
+async function loadMembers(){
+  const snap=await db.collection('members').orderBy('name').get();
+  allMembers=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderMembers(allMembers);
+}
+
+function filterMembers(){
+  const q=(document.getElementById('memberSearch').value||'').toLowerCase();
+  renderMembers(allMembers.filter(m=>(m.name+' '+m.surname).toLowerCase().includes(q)||(m.phone||'').includes(q)));
+}
+
+async function renderMembers(members){
+  const sSnap=await db.collection('sessions').get();
+  const sessions=sSnap.docs.map(d=>({id:d.id,...d.data()}));
+  const list=document.getElementById('memberList');
+  if(!list)return;
+  if(!members.length){list.innerHTML=`<p style="color:var(--gray);text-align:center;padding:30px">${t('noData')}</p>`;return}
+  list.innerHTML=members.map(m=>{
+    const used=sessions.filter(s=>s.memberId===m.id).length;
+    const total=m.packageType==='monthly'?'∞':parseInt(m.packageType)||0;
+    const rem=m.packageType==='monthly'?'∞':Math.max(0,(parseInt(m.packageType)||0)-used);
+    const pct=m.packageType==='monthly'?50:total>0?Math.round((used/total)*100):0;
+    const bc=rem==='∞'?'badge-teal':rem<=2?'badge-danger':rem<=5?'badge-warning':'badge-success';
+    return`<div class="member-card">
+      <div class="member-avatar">${(m.name||'?')[0].toUpperCase()}</div>
+      <div class="member-info">
+        <div class="member-name">${m.name} ${m.surname}</div>
+        <div class="member-detail">${m.phone||''}</div>
+        <div style="margin-top:6px"><span class="badge ${bc}">${rem} ${t('remaining')}</span><span style="font-size:.75rem;color:var(--gray);margin-left:8px">${used}/${total} ${t('used')}</span></div>
+        <div class="pkg-bar"><div class="pkg-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="member-actions">
+        <button class="btn btn-outline btn-sm" onclick="viewMemberDetail('${m.id}')">👁</button>
+        <button class="btn btn-outline btn-sm" onclick="openEditMember('${m.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteMember('${m.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAddMember(){
+  editingMemberId=null;
+  document.getElementById('memberModalTitle').textContent=t('addMember');
+  ['mName','mSurname','mPhone','mEmail','mNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mBirth').value='';
+  document.getElementById('mPackage').value='8';
+  document.getElementById('mPackageStart').value=new Date().toISOString().split('T')[0];
+  openModal('memberModal');
+}
+
+function openEditMember(id){
+  const m=allMembers.find(x=>x.id===id);if(!m)return;
+  editingMemberId=id;
+  document.getElementById('memberModalTitle').textContent='✏️ Üye Düzenle';
+  document.getElementById('mName').value=m.name||'';
+  document.getElementById('mSurname').value=m.surname||'';
+  document.getElementById('mPhone').value=m.phone||'';
+  document.getElementById('mEmail').value=m.email||'';
+  document.getElementById('mBirth').value=m.birth||'';
+  document.getElementById('mPackage').value=m.packageType||'8';
+  document.getElementById('mPackageStart').value=m.packageStart||'';
+  document.getElementById('mNotes').value=m.notes||'';
+  openModal('memberModal');
+}
+
+async function saveMember(){
+  const data={name:document.getElementById('mName').value.trim(),surname:document.getElementById('mSurname').value.trim(),phone:document.getElementById('mPhone').value.trim().replace(/\s/g,''),email:document.getElementById('mEmail').value.trim(),birth:document.getElementById('mBirth').value,packageType:document.getElementById('mPackage').value,packageStart:document.getElementById('mPackageStart').value,notes:document.getElementById('mNotes').value.trim(),updatedAt:new Date().toISOString()};
+  if(!data.name||!data.phone){showToast('Ad ve telefon zorunlu!','error');return}
+  if(editingMemberId)await db.collection('members').doc(editingMemberId).update(data);
+  else{data.createdAt=new Date().toISOString();await db.collection('members').add(data)}
+  closeModal('memberModal');showToast(t('memberSaved'),'success');
+  const tc=document.getElementById('tc-members');if(tc)buildMembers(tc);
+}
+
+async function deleteMember(id){
+  if(!confirm(t('deleteConfirm')))return;
+  await db.collection('members').doc(id).delete();
+  showToast('Üye silindi','info');
+  const tc=document.getElementById('tc-members');if(tc)buildMembers(tc);
+}
+
+async function viewMemberDetail(id){
+  const m=allMembers.find(x=>x.id===id);if(!m)return;
+  document.getElementById('detailName').textContent=`${m.name} ${m.surname}`;
+  const sSnap=await db.collection('sessions').where('memberId','==',id).get();
+  const sessions=sSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.date.localeCompare(a.date));
+  const used=sessions.length;
+  const total=m.packageType==='monthly'?'∞':parseInt(m.packageType)||0;
+  const rem=m.packageType==='monthly'?'∞':Math.max(0,(parseInt(m.packageType)||0)-used);
+  document.getElementById('detailContent').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="stat-card"><div class="stat-num">${used}</div><div class="stat-label">${t('used')}</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:${rem<=2&&rem!=='∞'?'var(--danger)':'var(--teal)'}">${rem}</div><div class="stat-label">${t('remaining')}</div></div>
+    </div>
+    <div style="margin-bottom:12px;font-size:.85rem;color:var(--gray)">📞 ${m.phone||'-'} &nbsp; ✉️ ${m.email||'-'} &nbsp; 🎂 ${m.birth||'-'}${m.notes?`<br>📝 ${m.notes}`:''}</div>
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:.85rem;color:var(--teal);margin-bottom:10px">${t('myQR')}</div>
+      <div id="memberQrCode"></div>
+    </div>
+    <div style="font-weight:700;margin-bottom:10px;color:var(--teal)">${t('myHistory')}</div>
+    ${sessions.length?sessions.map(s=>`
+      <div class="session-item">
+        <div><div class="session-type">${s.type}</div><div class="session-date">${s.note||''}</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge badge-teal">${s.date}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteSession('${s.id}','${id}')">🗑</button>
+        </div>
+      </div>`).join(''):`<p style="color:var(--gray);text-align:center;padding:20px">${t('noData')}</p>`}`;
+  openModal('memberDetailModal');
+  setTimeout(()=>{const el=document.getElementById('memberQrCode');if(el)new QRCode(el,{text:id,width:140,height:140,colorDark:'#000',colorLight:'#fff'})},200);
+}
+
+// SEANSLAR
+async function buildSessions(container){
+  container.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div style="font-weight:700">${t('sessions')}</div>
+      <button class="btn btn-teal" onclick="openAddSession()">${t('addSession')}</button>
+    </div>
+    <div id="sessionList"><p style="color:var(--gray)">Yükleniyor...</p></div>`;
+  await renderSessionList();
+}
+
+async function renderSessionList(){
+  const el=document.getElementById('sessionList');if(!el)return;
+  const[sSnap,mSnap]=await Promise.all([db.collection('sessions').orderBy('date','desc').limit(50).get(),db.collection('members').get()]);
+  const sessions=sSnap.docs.map(d=>({id:d.id,...d.data()}));
+  const members=mSnap.docs.map(d=>({id:d.id,...d.data()}));
+  el.innerHTML=`<div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Ad Soyad</th><th>Tür</th><th>Tarih</th><th></th></tr></thead>
+    <tbody>${sessions.map(s=>{
+      const m=members.find(x=>x.id===s.memberId);
+      return`<tr><td>${m?m.name+' '+m.surname:'-'}</td><td><span class="badge badge-teal">${s.type}</span></td><td>${s.date}</td><td><button class="btn btn-danger btn-sm" onclick="deleteSession('${s.id}')">🗑</button></td></tr>`;
+    }).join('')||`<tr><td colspan="4" style="text-align:center;color:var(--gray)">${t('noData')}</td></tr>`}</tbody>
+  </table></div></div>`;
+}
+
+async function openAddSession(){
+  const snap=await db.collection('members').orderBy('name').get();
+  document.getElementById('sMember').innerHTML=snap.docs.map(d=>{const m=d.data();return`<option value="${d.id}">${m.name} ${m.surname}</option>`}).join('');
+  document.getElementById('sDate').value=new Date().toISOString().split('T')[0];
+  openModal('sessionModal');
+}
+
+async function saveSession(memberId,type,date){
+  if(memberId&&type&&date){
+    await db.collection('sessions').add({memberId,type,date,note:'QR ile',createdAt:new Date().toISOString()});
+    showToast(t('sessionChecked'),'success');
+    const tc=document.getElementById('tc-qrscan');if(tc&&tc.classList.contains('active'))buildQRScan(tc);
+    return;
+  }
+  const mId=document.getElementById('sMember').value;
+  const d=document.getElementById('sDate').value;
+  const tp=document.getElementById('sType').value;
+  const note=document.getElementById('sNote').value;
+  if(!mId||!d)return;
+  await db.collection('sessions').add({memberId:mId,type:tp,date:d,note,createdAt:new Date().toISOString()});
+  closeModal('sessionModal');showToast(t('sessionAdded'),'success');
+  const tc=document.getElementById('tc-sessions');if(tc&&tc.classList.contains('active'))renderSessionList();
+  const dash=document.getElementById('tc-dashboard');if(dash&&dash.classList.contains('active'))buildDashboard(dash);
+}
+
+async function deleteSession(id,memberId){
+  if(!confirm(t('deleteConfirm')))return;
+  await db.collection('sessions').doc(id).delete();
+  showToast('Seans silindi','info');
+  if(memberId){viewMemberDetail(memberId);return}
+  renderSessionList();
+}
+
+// QR OKUMA
+function buildQRScan(container){
+  if(qrScannerInline){try{qrScannerInline.clear()}catch(e){}qrScannerInline=null}
+  container.innerHTML=`
+    <div class="card" style="max-width:500px;margin:0 auto">
+      <div class="card-title" style="margin-bottom:16px">📷 ${t('qrScan')}</div>
+      <div id="qr-reader-inline"></div>
+      <div id="qrResultInline" style="display:none" class="qr-result"></div>
+    </div>`;
+  setTimeout(()=>{
+    qrScannerInline=new Html5QrcodeScanner('qr-reader-inline',{fps:10,qrbox:250});
+    qrScannerInline.render(async decodedText=>{
+      try{qrScannerInline.clear()}catch(e){}qrScannerInline=null;
+      const resEl=document.getElementById('qrResultInline');
+      const docRef=await db.collection('members').doc(decodedText).get();
+      if(!docRef.exists){resEl.style.display='block';resEl.innerHTML=`<span style="color:var(--danger)">❌ ${t('invalidQR')}</span>`;return}
+      const m=docRef.data();
+      const sSnap=await db.collection('sessions').where('memberId','==',decodedText).get();
+      const used=sSnap.size;
+      const total=m.packageType==='monthly'?'∞':parseInt(m.packageType)||0;
+      const rem=m.packageType==='monthly'?'∞':Math.max(0,(parseInt(m.packageType)||0)-used);
+      resEl.style.display='block';
+      resEl.innerHTML=`
+        <div style="font-size:1.2rem;font-weight:700;margin-bottom:8px">✅ ${m.name} ${m.surname}</div>
+        <div style="color:var(--gray);margin-bottom:10px">${m.phone}</div>
+        <span class="badge ${rem<=2&&rem!=='∞'?'badge-danger':'badge-success'}">${rem} ${t('remaining')}</span>
+        <button class="btn btn-teal" style="margin-top:14px;width:100%" onclick="saveSession('${decodedText}','Pilates','${new Date().toISOString().split('T')[0]}')">
+          ✓ ${t('addSession')}
+        </button>`;
+    },()=>{});
+  },300);
+}
+
+// ÜYE PANEL
+async function buildMyCard(container){
+  const m=currentUser;
+  const sSnap=await db.collection('sessions').where('memberId','==',m.id).get();
+  const used=sSnap.size;
+  const total=m.packageType==='monthly'?'∞':parseInt(m.packageType)||0;
+  const rem=m.packageType==='monthly'?'∞':Math.max(0,(parseInt(m.packageType)||0)-used);
+  const pct=m.packageType==='monthly'?50:total>0?Math.round((used/total)*100):0;
+  container.innerHTML=`
+    <div class="card" style="max-width:400px;margin:0 auto;text-align:center">
+      <div class="member-avatar" style="width:70px;height:70px;font-size:1.8rem;margin:0 auto 16px">${(m.name||'?')[0].toUpperCase()}</div>
+      <div style="font-size:1.4rem;font-weight:700">${m.name} ${m.surname}</div>
+      <div style="color:var(--gray);margin-bottom:20px">${m.phone||''}</div>
+      <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+        <div class="stat-card"><div class="stat-num">${used}</div><div class="stat-label">${t('used')}</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:${rem<=2&&rem!=='∞'?'var(--danger)':'var(--teal)'}">${rem}</div><div class="stat-label">${t('remaining')}</div></div>
+      </div>
+      <div class="pkg-bar" style="margin:16px 0"><div class="pkg-fill" style="width:${pct}%"></div></div>
+      <div style="color:var(--gray);font-size:.85rem;margin-bottom:20px">${m.packageType==='monthly'?'Aylık Sınırsız':m.packageType+' Seans Paketi'}</div>
+      <div style="font-size:.85rem;color:var(--teal);margin-bottom:10px">${t('myQR')}</div>
+      <div id="myQrCode"></div>
+    </div>`;
+  setTimeout(()=>{const el=document.getElementById('myQrCode');if(el)new QRCode(el,{text:m.id,width:160,height:160,colorDark:'#000',colorLight:'#fff'})},200);
+}
+
+async function buildMyHistory(container){
+  const sSnap=await db.collection('sessions').where('memberId','==',currentUser.id).get();
+  const sessions=sSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.date.localeCompare(a.date));
+  container.innerHTML=`
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">${t('myHistory')}</div>
+      ${sessions.length?sessions.map(s=>`
+        <div class="session-item">
+          <div><div class="session-type">${s.type}</div><div class="session-date">${s.note||''}</div></div>
+          <span class="badge badge-teal">${s.date}</span>
+        </div>`).join(''):`<p style="color:var(--gray);text-align:center;padding:30px">${t('noData')}</p>`}
+    </div>`;
+}
+
+// MODAL
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')});
+});
+</script>
 </body>
 </html>
